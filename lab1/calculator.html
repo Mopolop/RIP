@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Калькулятор</title>
+</head>
+
+<body>
+  <div> <!-- div - это базовый html-контейнер, который может содержать в себе другие html-элементы. -->
+    
+    <!-- блок с экраном калькулятора, где будет выводиться результат вычислений. -->
+    <div id="result">
+      0
+    </div>
+
+    <!-- блок с кнопками калькулятора. -->
+    <div>
+      <!--горизонтальный ряд из четырех кнопок-->
+      <div>  
+        <button id="btn_op_clear">C</button>    <!-- про тэг кнопки: https://www.w3schools.com/tags/tag_button.asp -->
+        <button id="btn_op_sign">+/-</button>
+        <button id="btn_op_percent">%</button>
+        <button id="btn_op_div">/</button>
+      </div>
+
+      <div>
+        <button id="btn_digit_7">7</button>
+        <button id="btn_digit_8">8</button>
+        <button id="btn_digit_9">9</button>
+        <button id="btn_op_mult">x</button>
+      </div>
+
+      <div>
+        <button id="btn_digit_4">4</button>
+        <button id="btn_digit_5">5</button>
+        <button id="btn_digit_6">6</button>
+        <button id="btn_op_minus">-</button>
+      </div>
+
+      <div>
+        <button id="btn_digit_1">1</button>
+        <button id="btn_digit_2">2</button>
+        <button id="btn_digit_3">3</button>
+        <button id="btn_op_plus">+</button>
+      </div>
+
+      <div>
+        <button id="btn_digit_0">0</button>
+        <button id="btn_digit_dot">.</button>
+        <button id="btn_op_equal">=</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
