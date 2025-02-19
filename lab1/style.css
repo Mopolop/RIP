@@ -55,14 +55,18 @@
     font-family: Arial, Helvetica, sans-serif;
   }
 
-  body {
+  body{
+    background-image: url(scale_120.png);
+    background-position: 50px;
+    background-size: 70%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     display: block;           /* По умолчанию для body блочный элемент */
-    margin: 0;                /* Убираем отступы вокруг body */
-    height: 100vh;            /* Высота на весь экран */
-    background-color: #f0f0f0; /* Цвет фона для страницы */
+    margin-right: 70px;       /* Убираем отступы вокруг body */
+    height: 70vh;            /* Высота на весь экран */
     display: flex;            /* Flexbox для выравнивания содержимого */
-    justify-content: center;  /* Центрируем по горизонтали */
+    justify-content: right;  /* Центрируем по горизонтали */
     align-items: center;      /* Центрируем по вертикали */
+  
 }
-
-
+  
