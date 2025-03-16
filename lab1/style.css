@@ -1,24 +1,94 @@
+  body {
+    background-image: url('images/back.jpg'); /* Путь к изображению */
+    background-size: cover; /* Заполняет весь экран */
+    background-position: bottom center; /* Центрирует изображение */
+    background-repeat: no-repeat; /* Отключает повторение */
+    background-color: rgb(35, 35, 35); /* Белый цвет для незаполненных областей */
+    background-attachment: fixed; /* Закрепляет изображение */
+    /* display: flex; */
+    /* justify-content: flex-end;  */
+    /* align-items: center;     */
+    /* height: 100vh;           */
+    margin: 0;               /* Убираем отступы по умолчанию */
+  }
 
-/* опишем базовый стиль кнопки калькулятора */
-.my-btn { 
+  /* опишем базовый стиль кнопки калькулятора */
+  .my-btn { 
     margin-right: 5px;           /* задаем отступ от кнопки справа */
-    margin-top: 5px;             /* задаем отступ от кнопки сверху*/
+    margin-top: 8px;             /* задаем отступ от кнопки сверху*/
     width: 50px;                 /* задаем ширину кнопки */
     height: 50px;                /* задаем высоту кнопки */
-    border-radius: 20%;          /* округляем кнопку */
+              /* округляем кнопку */
     border: none;                /* отключаем обводку */
-    background: #515151;         /* задаем серый цвет кнопки */
-    color: white;                /* задаем белый цвет текста внутри кнопки */
+    background:   white;         /* задаем серый цвет кнопки */
+    color: #004583;                /* задаем белый цвет текста внутри кнопки */
     font-size: 1.5rem;           /* увеличим размер шрифта */
+    font-weight: bold;
     font-family: Arial, Helvetica, sans-serif; /* сменим шрифт */
     cursor: pointer;             /* при наведении на кнопку курсор будет изменен
-                                    со стрелки на 'указательный палец' */
+                                 со стрелки на 'указательный палец' */
     user-select: none;           /* отключаем возможность выделить текст внутри кнопки */
-  } 
-  
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.3); /* небольшая тень */
+
+    border: 4px solid;    /* Черная обводка толщиной 2px */
+    border-color: #004583;
+  }   
+
+  details, 
+  .github-btn {
+    font-size: 1.5rem;
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    color: #004583;
+
+    border: 5px solid rgb(227, 33, 27);
+    background-color: rgb(255, 255, 255);    /* Белый фон */
+  }
+
+
+  .github-btn {            
+    padding: 10px 20px;         /* Отступы */          
+    text-decoration: none;      /* Убираем подчеркивание */
+
+    display: flex;            /* Включаем flexbox */
+    justify-content: center;  /* Выравниваем текст по горизонтали */
+    align-items: center;      /* Выравниваем текст по вертикали */
+
+    width: 200px;                      /* Задаем ширину кнопки */
+
+    position: absolute;  /* Позволяет свободно перемещать кнопку */
+    top: 61px;           /* Расстояние от верхней границы экрана */
+    right: 450px;         /* Расстояние от правой границы экрана */
+  }
+
+  .github-btn:active {
+    background-color: #a7c9e7;
+  }
+
+  .calculator-frame {
+    /* width: 234px; */
+    background: rgb(106, 166, 195); /* Темно-синий корпус */
+    padding: 20px;
+    border: 8px solid;    /* Черная обводка толщиной 2px */
+    border-color: #004583;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+    text-align: center;
+
+    position: absolute; /* Устанавливаем позицию относительно ближайшего позиционированного родителя */
+    right: 65px; /* Отступ от правого края */
+    top: 50%; /* Центрируем по вертикали */
+    transform: translateY(-50%); /* Подстраиваем, чтобы центрировать */
+  }
+ 
+  .github-btn:hover {
+    color: rgb(227, 33, 27);
+  }
+
   /* hover - это состояние элемента, когда на него наведен курсор */
   .my-btn:hover {
-    background: darkgray; /* при наведение курсора на кнопку, она будет окрашена в серый */
+    background: rgb(197, 197, 197); /* при наведение курсора на кнопку, она будет окрашена в серый */
+    color: rgb(227, 33, 27);
+    border-color: #466d8f;
   }
   
   /* active - это состояние активации элемента. В случае кнопки - нажатие на нее */
@@ -28,45 +98,87 @@
   
   /* селектор для кнопок первостепенных операций */
   .my-btn.primary { 
-    background: #ff9801; /* цвет кнопки оранжевый */
+    background: rgb(23, 62, 81); /* цвет кнопки оранжевый */
+    color: white;
+    border-color: #ffffff;
+  }
+
+  .my-btn.primary:hover { 
+    background: rgb(47, 86, 106); /* цвет кнопки оранжевый */
+    color: rgb(160, 0, 0);
+    border-color: #c5b5b5;
   }
   
   /* селектор для кнопок второстепенных операций */
   .my-btn.secondary { 
-    background: #a6a6a6; /* цвет кнопки сервый */
+    background: #bdbcbc; /* цвет кнопки сервый */
   }
   
   /* селектор для кнопки расчета выражения (=) */
   .my-btn.execute { 
     width: 110px;          /* сделаем кнопку шире других */
-    border-radius: 34px;   /* подкорректируем округлость */
   }
   
   /* селектор для поля вывода результата */
-  .result { 
-    width: 220px;
-    height: 50px;
-    margin-bottom: 15px;         /* отступ снизу */
-    padding-right: 10px;         /* выступ справа */
-    background: rgb(73, 73, 73); /* цвет можно задавать и таким образом */
-    text-align: right;           /* примагнитим текст к правой стороне */
-    color: #ffffff;              /* цвет текста белый */
+    .result { 
+      width: 275px;
+      height: 50px;
+      margin-bottom: 15px;         /* отступ снизу */
+      padding-right: 10px;         /* выступ справа */
+      background: rgb(229, 245, 250); /* цвет можно задавать и таким образом */
+      text-align: right;           /* примагнитим текст к правой стороне */
+      color: #000000;              /* цвет текста белый */
+      font-size: 1.5rem;
+      font-weight: bold;
+      font-family: Arial, Helvetica, sans-serif;
+      box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.3); /* небольшая тень */
+      
+      display: flex;                  /* flex-контейнер */
+      align-items: center;            /* вертикальное центрирование */
+      justify-content: flex-end;      /* прижатие к правому краю */
+      padding-right: 10px;            /* отступ справа */
+    }
+
+  .calculator-title {
     font-size: 1.5rem;
-    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;   /* делаем текст жирным */
+    font-family: Helvetica, Arial, sans-serif;  /* Шрифт Helvetica */
+    text-align: center;
+    color: #154671;
+    margin-bottom: 10px; /* отступ для разделения с экраном калькулятора */
   }
 
-  body{
-    background-image: url(scale_120.png);
-    background-position: 50px;
-    background-size: 70%;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    display: block;           /* По умолчанию для body блочный элемент */
-    margin-right: 70px;       /* Убираем отступы вокруг body */
-    height: 70vh;            /* Высота на весь экран */
-    display: flex;            /* Flexbox для выравнивания содержимого */
-    justify-content: right;  /* Центрируем по горизонтали */
-    align-items: center;      /* Центрируем по вертикали */
+  .dino-gif {
+    width:30px; /* Размер GIF */
+    height: auto; /* Сохраняем пропорции */
+    margin-left: 5px; /* Отступ между текстом и изображением */
+  }
   
-}
+  details {
+    margin: 0 220px;
+    padding: 10px 20px;
+
+    width: 200px;
+    height: 32; /* Авторазмер по высоте */
+
+    position: absolute;
+    top: 140px;
+    right: 230px;
+  }
   
+  summary {
+    font-size: 1.5rem;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+  }
+
+  summary:hover {
+    color: rgb(227, 33, 27);
+  }
+
+  details p {
+    font-size: 1rem; /* Размер шрифта содержимого */
+    text-align: left; /* Выравнивание по левому краю */
+    margin: 5px 0; /* Отступы между строками */
+  }
