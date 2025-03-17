@@ -5,10 +5,6 @@
     background-repeat: no-repeat; /* Отключает повторение */
     background-color: rgb(35, 35, 35); /* Белый цвет для незаполненных областей */
     background-attachment: fixed; /* Закрепляет изображение */
-    /* display: flex; */
-    /* justify-content: flex-end;  */
-    /* align-items: center;     */
-    /* height: 100vh;           */
     margin: 0;               /* Убираем отступы по умолчанию */
   }
 
@@ -57,7 +53,7 @@
     width: 200px;                      /* Задаем ширину кнопки */
 
     position: absolute;  /* Позволяет свободно перемещать кнопку */
-    top: 61px;           /* Расстояние от верхней границы экрана */
+    top: 134px;           /* Расстояние от верхней границы экрана */
     right: 450px;         /* Расстояние от правой границы экрана */
   }
 
@@ -79,6 +75,12 @@
     top: 50%; /* Центрируем по вертикали */
     transform: translateY(-50%); /* Подстраиваем, чтобы центрировать */
   }
+
+.calculator-frame:hover{
+  background: rgb(46, 145, 194);
+  transform: translateY(-50%) scale(1.1);
+
+}
  
   .github-btn:hover {
     color: rgb(227, 33, 27);
@@ -137,6 +139,10 @@
       align-items: center;            /* вертикальное центрирование */
       justify-content: flex-end;      /* прижатие к правому краю */
       padding-right: 10px;            /* отступ справа */
+      white-space: nowrap;         /* Запрещает перенос строк */
+      overflow: hidden;            /* Скрывает текст, выходящий за пределы */
+      text-overflow: ellipsis;     /* Добавляет "..." при переполнении */
+      align-items: center;
     }
 
   .calculator-title {
@@ -157,7 +163,7 @@
     height: 32; /* Авторазмер по высоте */
 
     position: absolute;
-    top: 140px;
+    top: 200px;
     right: 230px;
   }
   
@@ -177,3 +183,9 @@
     text-align: left; /* Выравнивание по левому краю */
     margin: 5px 0; /* Отступы между строками */
   }
+
+  #btn_digit_000 {
+    text-align: center;
+    font-size: 1.5rem; /* Сделаем размер шрифта таким же, как у других кнопок */
+    letter-spacing: -3px; /* Слегка уменьшаем расстояние между символами */
+}

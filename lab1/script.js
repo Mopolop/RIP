@@ -1,4 +1,6 @@
 // файл script.js
+
+
 window.onload = function(){ 
 
     let a = ''
@@ -52,6 +54,7 @@ window.onload = function(){
         selectedOperation = '/'
     }
     
+    
     // кнопка смены знака
     document.getElementById("btn_op_sign").onclick = function() {
         if (selectedOperation) {
@@ -100,28 +103,39 @@ window.onload = function(){
         expressionResult = ''
         outputElement.innerHTML = 0
     }
-    
+    let lastOperation
+    let lastb = 0
     // кнопка расчёта результата
-    document.getElementById("btn_op_equal").onclick = function() { 
-        if (a === '' || b === '' || !selectedOperation)
+    document.getElementById("btn_op_equal").onclick = function() {
+        if (a === ''){
             return
-            
-        switch(selectedOperation) { 
+        }
+        if(b === '' && (lastOperation === '+' || lastOperation === '-')){
+            b = lastb;
+            selectedOperation = lastOperation
+        }    
+        lastb = b
+
+        switch(selectedOperation) {
             case 'x':
-                expressionResult = (+a) * (+b)
+                expressionResult = (+a) * (+b);
                 break;
             case '+':
-                expressionResult = (+a) + (+b)
+                expressionResult = (+a) + (+b);
+                lastOperation = '+'
                 break;
             case '-':
-                expressionResult = (+a) - (+b)
+                expressionResult = (+a) - (+b);
+                lastOperation = '-'
                 break;
             case '/':
-                expressionResult = (+a) / (+b)
+                expressionResult = (+a) / (+b);
+                break;
+            case '%':
+                expressionResult = (+a) % (+b);
                 break;
         }
-        
-        a = expressionResult.toString()
+        a = expressionResult.toString();
         b = ''
         selectedOperation = null
     
@@ -217,3 +231,4 @@ window.onload = function(){
         }
     };
 };
+
