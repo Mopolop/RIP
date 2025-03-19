@@ -62,7 +62,7 @@
   }
 
   .calculator-frame {
-    /* width: 234px; */
+    transition: transform 0.6s ease, background 0.6s ease;
     background: rgb(106, 166, 195); /* Темно-синий корпус */
     padding: 20px;
     border: 8px solid;    /* Черная обводка толщиной 2px */
@@ -79,6 +79,7 @@
 .calculator-frame:hover{
   background: rgb(46, 145, 194);
   transform: translateY(-50%) scale(1.1);
+  transition: transform 0.6s ease, background 0.6s ease;
 
 }
  
