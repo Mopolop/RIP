@@ -16,17 +16,34 @@ window.onload = function(){
     
     function onDigitButtonClicked(digit) {
         if (!selectedOperation) {
-            if ((digit != '.') || (digit == '.' && !a.includes(digit))) { 
-                a += digit
+            if(digit === '.' && a==='')
+                return;
+            if ((digit !== '.') || (digit === '.' && !a.includes('.'))) { 
+                if (a === '0' && digit !== '.') {
+                    a = digit; // Заменяем 0 на новую цифру
+                } else {
+                    a += digit;
+                }
             }
-            outputElement.innerHTML = a
+            if(a === '000')
+                a ='0'
+            outputElement.innerHTML = a;
         } else {
-            if ((digit != '.') || (digit == '.' && !b.includes(digit))) { 
-                b += digit
-                outputElement.innerHTML = b        
+            if(digit === '.' && b==='')
+                return;
+            if ((digit !== '.') || (digit === '.' && !b.includes('.'))) { 
+                if (b === '0' && digit !== '.') {
+                    b = digit; // Заменяем 0 на новую цифру
+                } else {
+                    b += digit;
+                }
             }
+            if(b === '000')
+                b ='0'
+            outputElement.innerHTML = b;        
         }
     }
+    
     
     // устанавка колбек-функций на кнопки циферблата по событию нажатия
     digitButtons.forEach(button => {
@@ -130,9 +147,6 @@ window.onload = function(){
                 break;
             case '/':
                 expressionResult = (+a) / (+b);
-                break;
-            case '%':
-                expressionResult = (+a) % (+b);
                 break;
         }
         a = expressionResult.toString();
