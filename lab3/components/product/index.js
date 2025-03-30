@@ -1,30 +1,32 @@
 export class ProductComponent {
     constructor(parent) {
-        this.parent = parent
+        this.parent = parent;
     }
 
     getHTML(data) {
-        return (
-            `
-                <div class="card mb-3" style="width: 540px;">
-                    <div class="row g-0">
-                        <div class="col-md-4">
-                            <img src="${data.src}" class="img-fluid" alt="картинка">
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                                <h5 class="card-title">${data.title}</h5>
-                                <p class="card-text">${data.text}</p>
-                            </div>
-                        </div>
+        // Генерируем бейдж, если есть данные
+        const badge = data.badge 
+            ? `<span class="badge ${data.badge.class}">${data.badge.text}</span>`
+            : '';
+
+        return `
+            <div class="product-card">
+                <img src="${data.src}" 
+                     alt="${data.title}" 
+                     class="product-card-image">
+                <div class="product-card-body">
+                    <div class="card-header">
+                    ${badge}
+                        <h3 class="product-card-title">${data.title}</h3>    
                     </div>
+                    <p class="product-card-text">${data.text}</p>
                 </div>
-            `
-        )
+            </div>
+        `;
     }
 
     render(data) {
-        const html = this.getHTML(data)
-        this.parent.insertAdjacentHTML('beforeend', html)
+        const html = this.getHTML(data);
+        this.parent.insertAdjacentHTML('beforeend', html);
     }
 }

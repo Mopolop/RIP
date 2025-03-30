@@ -1,0 +1,83 @@
+/* Стили для контейнера товаров */
+
+.products-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Фиксировано 3 колонки */
+    gap: 20px; /* Расстояние между карточками */
+    max-width: 1200px; /* Ограничение максимальной ширины */
+    margin: 0 auto; /* Центрирование */
+    padding: 20px;
+  }
+  
+  
+  /* Стили для карточки товара */
+  .product-card {
+    margin: 15px;
+    width: 100%;
+    border: 5px solid #e0e0e0;
+    border-radius: 25px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: white;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .product-card-image-container {
+    padding: 15px 15px 0 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f8f8f8; /* Фон на случай прозрачных изображений */
+    min-height: 160px; /* Минимальная высота контейнера */
+  }
+  
+  .product-card-image {
+    max-width: 100%;
+    max-height: 160px;
+    width: auto;
+    height: auto;
+    border-radius: 15px;
+    display: block;
+    object-fit: contain; /* Важно: меняем cover на contain */
+  }
+  
+  .product-card-body {
+    padding: 15px 25px 25px 25px;
+    flex-grow: 1;
+  }
+  
+  .product-card-title {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .product-card-text {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+  }
+
+  /* Контейнер кнопки "Назад" */
+  .back-button-container {
+    width: 70px;
+    height: 40px;
+    position: absolute; /* Абсолютное позиционирование */
+    top: 40px;         /* Отступ сверху */
+    left: 50px;        /* Отступ слева */
+    background: white ;              /* Фон */
+    border: 3px solid #0d6efd;       /* Граница */
+    color: #0d6efd;
+    border-radius: 10px;
+    font-weight: bold;
+    z-index: 10;       /* Чтобы кнопка была поверх других элементов */
+  }

@@ -1,50 +1,58 @@
-import {BackButtonComponent} from "../../components/back-button/index.js";
-import {MainPage} from "../main/index.js";
-import {ProductComponent} from "../../components/product/index.js";
+import { BackButtonComponent } from "../../components/back-button/index.js";
+import { MainPage } from "../main/index.js";
+import { ProductComponent } from "../../components/product/index.js";
 
 export class ProductPage {
-    constructor(parent, id) {
-        this.parent = parent
-        this.id = id
+    constructor(parent, categoryId, productData) {
+        this.parent = parent;
+        this.categoryId = categoryId; // ID категории (1-8)
+        this.productData = productData; // Все данные о товарах
     }
 
-    getData() {
-        return {
-            id: 1,
-            src: "https://i.pinimg.com/originals/c9/ea/65/c9ea654eb3a7398b1f702c758c1c4206.jpg",
-            title: `Акция ${this.id}`,
-            text: "Такой акции вы еще не видели"
-        }
+    getProductsForCategory() {
+        // Получаем товары для выбранной категории
+        return this.productData[this.categoryId] || [];
     }
-
+    
     get pageRoot() {
-        return document.getElementById('product-page')
+        return document.getElementById("product-page");
     }
 
     getHTML() {
-        return (
-            `
-                <div id="product-page"></div>
-            `
-        )
+        return `
+            <div id="product-page">
+                <div class="products-container"></div>
+            </div>
+        `;
     }
 
+    
     clickBack() {
-        const mainPage = new MainPage(this.parent)
-        mainPage.render()
+        const mainPage = new MainPage(this.parent);
+        mainPage.render();
     }
 
-    
     render() {
-        this.parent.innerHTML = ''
-        const html = this.getHTML()
-        this.parent.insertAdjacentHTML('beforeend', html)
-    
-        const backButton = new BackButtonComponent(this.pageRoot)
-        backButton.render(this.clickBack.bind(this))
-    
-        const data = this.getData()
-        const stock = new ProductComponent(this.pageRoot)
-        stock.render(data)
+        this.parent.innerHTML = "";
+        this.parent.insertAdjacentHTML("beforeend", this.getHTML());
+
+        // Кнопка "Назад"
+        const backButton = new BackButtonComponent(this.pageRoot);
+        backButton.render(this.clickBack.bind(this));
+
+        // Получаем товары для категории
+        const products = this.getProductsForCategory();
+        
+        if (products.length === 0) {
+            this.pageRoot.innerHTML += "<p>Товары не найдены</p>";
+            return;
+        }
+
+        // Рендерим все товары категории
+        const container = this.pageRoot.querySelector('.products-container');
+        products.forEach(product => {
+            const productComponent = new ProductComponent(container);
+            productComponent.render(product);
+        });
     }
 }
