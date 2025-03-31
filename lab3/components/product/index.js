@@ -16,7 +16,7 @@ export class ProductComponent {
                      class="product-card-image">
                 <div class="product-card-body">
                     <div class="card-header">
-                    ${badge}
+                        ${badge}
                         <h3 class="product-card-title">${data.title}</h3>    
                     </div>
                     <p class="product-card-text">${data.text}</p>

@@ -15,14 +15,15 @@ export class ProductCardComponent {
         `;
     }
     
-    addListeners(data, listener) {
-        // Добавляем обработчик на всю карточку
-        this.parent.lastElementChild.addEventListener("click", listener);
-    }
+    addListeners(listener) {
+     const cards = this.parent.querySelectorAll('.card');
+     cards.forEach(card => card.addEventListener('click', listener));
+ }
+
     
     render(data, listener) {
-        const html = this.getHTML(data);
-        this.parent.insertAdjacentHTML('beforeend', html);
-        this.addListeners(data, listener);
-    }
+    const html = this.getHTML(data);
+    this.parent.insertAdjacentHTML('beforeend', html);
+    this.addListeners(listener); 
+}
 }

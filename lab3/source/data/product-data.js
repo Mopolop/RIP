@@ -53,7 +53,7 @@ export const productData = {
         { id: 81, src: "source/pictures/Вино.jpg", title: "Вино белое брют", text: "Италия, 0,75л - 1499₽", badge: { class: "badge text-bg-secondary", text: "Акция" } },
         { id: 82, src: "https://images.av.ru/av.ru/product/h03/hb3/9826012299294.jpg", title: "Коньяк Courvoisier XO", text: "Франция, 0,5л - 8999₽" },
         { id: 83, src: "source/pictures/Саке.jpg", title: "Саке Gekkeikan", text: "Япония, 0,72л - 2499₽", badge: { class: "badge text-bg-secondary", text: "Акция" } },
-        { id: 84, src: "source/pictures/Виски.jpg", title: "Виски Johnnie Walker", text: "Black Label, 0,7л - 3999₽" },
+        { id: 84, src: "source/pictures/Виски.jpg", title: "Виски Glenfiddich", text: "Шотландский,0,7л - 3999₽" },
         { id: 85, src: "source/pictures/Шампанское.jpg", title: "Шампанское брют", text: "0,75л - 1299₽" }
     ]
 };

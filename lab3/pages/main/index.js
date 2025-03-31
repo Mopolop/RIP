@@ -15,7 +15,7 @@ export class MainPage {
         return `
             <div class="header-container">
                 <div class="header-rectangle">
-                    <h1>Добро пожаловать в наш магазин</h1>
+                    <h1>Витязь-Аэро</h1>
                     <p>Широкий ассортимент продуктов на любой вкус</p>
                 </div>
             </div>
