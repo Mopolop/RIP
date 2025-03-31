@@ -1,6 +1,6 @@
 import { ProductCardComponent } from "../../components/product-card/index.js";
 import { ProductPage } from "../product/index.js";
-import { productData } from "../../source/data/product-data.js"; // Импортируем данные
+import { productData } from "../../source/data/product-data.js";
 
 export class MainPage {
     constructor(parent) {
@@ -12,8 +12,16 @@ export class MainPage {
     }
         
     getHTML() {
-        return `<div id="main-page" class="d-flex flex-wrap"></div>`;
-    }
+        return `
+            <div class="header-container">
+                <div class="header-rectangle">
+                    <h1>Добро пожаловать в наш магазин</h1>
+                    <p>Широкий ассортимент продуктов на любой вкус</p>
+                </div>
+            </div>
+            <div id="main-page" class="d-flex flex-wrap"></div>
+        `;
+    }   
     getData() {
         return [
             { id: 1, src: "https://av.ru/images/hd1/h02/9829392810014.png", title: "Молочные продукты", text: "Молоко, сыр, масло" },

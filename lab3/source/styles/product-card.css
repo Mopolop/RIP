@@ -45,7 +45,7 @@
     height: auto;
     border-radius: 15px;
     display: block;
-    object-fit: contain; /* Важно: меняем cover на contain */
+    object-fit: contain; 
   }
   
   .product-card-body {

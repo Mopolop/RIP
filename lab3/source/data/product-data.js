@@ -1,9 +1,9 @@
 // productData.js
 export const productData = {
     1: [
-        { id: 11, src: "source/pictures/Масло.jpg", title: "Масло сливочное", text: "82,5%, фольга, 180г - 149₽", badge: { class: "badge text-bg-secondary", text: "Акция" } },
+        { id: 11, src: "source/pictures/Масло.jpg", title: "Масло сливочное", text: "82,5%, 180г - 149₽", badge: { class: "badge text-bg-secondary", text: "Акция" } },
         { id: 12, src: "source/pictures/Молоко.jpg", title: "Молоко пастеризованное", text: "3,2%, ПЭТ-бутылка, 950мл - 89₽" },
-        { id: 13, src: "https://images.av.ru/av.ru/product/h63/hd3/9724066299934.jpg", title: "Сметана", text: "20% жирности, 400г - 129₽" },
+        { id: 13, src: "https://images.av.ru/av.ru/product/h63/hd3/9724066299934.jpg", title: "Сметана", text: "15% жирности, 400г - 129₽" },
         { id: 14, src: "https://images.av.ru/av.ru/product/h00/h6f/9609172221982.jpg", title: "Йогурт", text: "Натуральный без сахара, 250г - 79₽" },
         { id: 15, src: "source/pictures/Сыр.jpg", title: "Сыр Гауда", text: "45% жирности, 200г - 289₽", badge: { class: "badge text-bg-success", text: "Собственного производства" } }
     ],
