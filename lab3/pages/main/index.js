@@ -14,6 +14,7 @@ export class MainPage {
     getHTML() {
         return `
             <div class="header-container">
+             
                 <div class="header-rectangle">
                     <h1>Витязь-Аэро</h1>
                     <p>Широкий ассортимент продуктов на любой вкус</p>
