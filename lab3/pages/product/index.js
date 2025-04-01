@@ -35,7 +35,7 @@ export class ProductPage {
     render() {
         this.parent.innerHTML = "";
         this.parent.insertAdjacentHTML("beforeend", this.getHTML());
-
+        
         // Кнопка "Назад"
         const backButton = new BackButtonComponent(this.pageRoot);
         backButton.render(this.clickBack.bind(this));

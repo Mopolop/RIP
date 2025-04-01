@@ -49,6 +49,7 @@ export class MainPage {
     }
 
     render() {
+        
         this.parent.innerHTML = '';
         this.parent.insertAdjacentHTML('beforeend', this.getHTML());
 
