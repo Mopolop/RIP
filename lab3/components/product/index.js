@@ -7,7 +7,7 @@ export class ProductComponent {
         // Генерируем бейдж, если есть данные
         const badge = data.badge 
             ? `<span class="badge ${data.badge.class}">${data.badge.text}</span>`
-            : '';
+            : '<br>';
 
         return `
             <div class="product-card">

@@ -1,7 +1,7 @@
 /* styles/category-card.css */
 
 body {
-    background-image: url('/Calculator/images/image.png'); /* Путь к изображению */
+    background-image: url('/Calculator/images/image3.png'); /* Путь к изображению */
     background-size: cover; /* Заполняет весь экран */
     background-position: bottom center; /* Центрирует изображение */
     background-repeat: no-repeat; /* Отключает повторение */
@@ -14,6 +14,7 @@ body {
 
   .card {
     width: 300px;
+    height: 400px; 
     margin: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 0;
@@ -23,34 +24,37 @@ body {
     margin-top: 20px;
     cursor: pointer;
     position: relative;
-
-}
+    border: 5px solid transparent; /* Фиксим пропущенное значение */
+    border-color: #004583;
+    transition: transform 0.4s ease; /* Добавляем переход для transform */
+}   
 
 .card-img-container {
     position: relative;
     width: 100%;
-    height: 200px; /* Фиксированная высота */
+    height: 100%;
 }
+
 
 .card-content-overlay {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 15px;
+    padding: 20px; /* Увеличиваем отступы */
+    color: white;
+    background: linear-gradient(to top, 
+                rgba(0,0,0,0.8) 0%, 
+                rgba(0,0,0,0.5) 50%,
+                rgba(0,0,0,0) 100%); /* Улучшенный градиент */
+}
+.card-title {
+    font-size: 22px; /* Было 18px */
+    margin-bottom: 12px;
+    font-weight: bold;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.9);
     color: white;
 }
-
-.card-title {
-    font-size: 18px;
-    margin-bottom: 8px;
-    font-weight: bold;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.8); 
-    font-size: 18px;
-    margin-bottom: 10px;
-    color: #004583;
-}
-
 
 .card:hover .card-img-top {
     transform: scale(1.05);
@@ -62,21 +66,15 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.5s ease;
+    transition: transform 0.2s ease;
 }
-
-.card:active {
-    transform: scale(0.98);
-}
-
 
 .card-text {
-    font-size: 14px;
+    font-size: 16px; /* Было 14px */
     margin: 0;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-    color: #666;
-    font-size: 14px;
-    margin-bottom: 15px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+    color: #f0f0f0; /* Более светлый серый */
+    line-height: 1.4; /* Улучшаем читаемость */
 }
 
 .header-rectangle {
@@ -84,8 +82,7 @@ body {
     margin: auto;
     margin-top: 20px;
     background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 25px;
+    border: 10px solid #004583;
     padding: 20px;
     text-align: center;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
