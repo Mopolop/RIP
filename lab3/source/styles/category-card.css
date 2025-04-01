@@ -1,7 +1,7 @@
 /* styles/category-card.css */
 
 body {
-    background-image: url('/Calculator/images/image3.png'); /* Путь к изображению */
+    background-image: url('/lab3/source/pictures/back-main.png'); /* Путь к изображению */
     background-size: cover; /* Заполняет весь экран */
     background-position: bottom center; /* Центрирует изображение */
     background-repeat: no-repeat; /* Отключает повторение */
