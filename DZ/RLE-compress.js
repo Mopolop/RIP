@@ -23,7 +23,6 @@ function rleCompress(inputArray) {
     return compressed;
 }
 
-// Запрос данных у пользователя
 readline.question(
     'Введите элементы массива через пробел (например: 1 1 2 a a b): ',
     input => {

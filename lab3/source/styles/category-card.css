@@ -1,12 +1,12 @@
 /* styles/category-card.css */
 
 body {
-    background-image: url('/lab3/source/pictures/back-main.png'); /* Путь к изображению */
+    background-image: url('/lab3/source/pictures/image.png'); /* Путь к изображению */
     background-size: cover; /* Заполняет весь экран */
     background-position: bottom center; /* Центрирует изображение */
     background-repeat: no-repeat; /* Отключает повторение */
     background-color: rgb(35, 35, 35); /* Белый цвет для незаполненных областей */
-    background-attachment: fixed; /* Закрепляет изображение */
+    background-attachment: fixed; /* Закрепляет изображение */  
     margin: 0;               /* Убираем отступы по умолчанию */
   }  
 
