@@ -69,17 +69,38 @@
     line-height: 1.5;
   }
 
-  /* Контейнер кнопки "Назад" */
-  .back-button-container {
-    width: 70px;
-    height: 40px;
-    position: absolute; /* Абсолютное позиционирование */
-    top: 140px;         /* Отступ сверху */
-    left: 55px;        /* Отступ слева */
-    background: white ;              /* Фон */
-    border: 3px solid #0d6efd;       /* Граница */
-    color: #0d6efd;
-    border-radius: 10px;
-    font-weight: bold;
-    z-index: 10;       /* Чтобы кнопка была поверх других элементов */
-  }
+  /* Контейнер для двух кнопок */
+.button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  position: absolute;
+  top: 40px;
+  left: 16px;
+  z-index: 10;
+   align-items: flex-start;
+}
+
+/* Одинаковый стиль для обеих кнопок */
+.action-button {
+  width: 140px;
+  height: 40px;
+  background: white;
+  border: 3px solid #0d6efd;
+  color: #0d6efd;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  /* Чтобы текст был по центру */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.action-button:hover {
+  background: #0d6efd;
+  color: white;
+}

@@ -2,37 +2,33 @@ import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export interface FileAccessor {
-  filePath: string;
-}
-
 @Injectable()
-export class FileService<I> {
-  private readonly filePath = path.resolve(__dirname);
+export class FileService<T> {
+    private readonly filePath: string;
 
-  constructor(filePath?: string) {
-    if (filePath) {
-      this.filePath = path.resolve(__dirname, filePath);
-    }
-  }
-
-  public read<T extends I>(): T {
-    const data = fs.readFileSync(this.filePath, 'utf8');
-
-    return JSON.parse(data) as T;
-  }
-
-  public add<T>(newData: T): void {
-    const data = this.read();
-
-    if (Array.isArray(data)) {
-      data.push(newData);
+    constructor(filename: string) {
+        this.filePath = path.join(process.cwd(), 'src/assets', filename);
+        this.ensureFileExists();
     }
 
-    this.write(data);
-  }
+    private ensureFileExists(): void {
+        if (!fs.existsSync(this.filePath)) {
+            fs.writeFileSync(this.filePath, '[]', 'utf8');
+        }
+    }
 
-  public write<T extends I>(data: T): void {
-    fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf8');
-  }
+    read(): T {
+        const data = fs.readFileSync(this.filePath, 'utf8');
+        return JSON.parse(data);
+    }
+
+    write(data: T): void {
+        fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf8');
+    }
+
+    add(item: any): void {
+        const data = this.read() as any[];
+        data.push(item);
+        this.write(data as T);
+    }
 }
