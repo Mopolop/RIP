@@ -76,7 +76,7 @@ func (r *Repository) GetMaterials() ([]Material, error) {
 			Title:       "Блок керамзитобетонный пустотелый Стандарт Керамзит",
 			Description: "390×190×188 мм",
 			Consumption: "0,02 м³ на 1 м³ кладки",
-			Image:       "block-keram	b.png",
+			Image:       "block-keram.png",
 			Count:       "72 шт./м³",
 		},
 	}
