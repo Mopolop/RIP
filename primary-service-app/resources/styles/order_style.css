@@ -1,0 +1,83 @@
+/* Основной контейнер страницы */
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: #F5F5F5; /* светлый фон страницы */
+}
+
+/* Хедер */
+.header {
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    background: #FFFFFF;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Логотип */
+.logo img {
+    width: 250px;
+    height: auto;
+}
+
+/* Контейнер материала */
+.material-container {
+    position: relative;
+    width: 1169px;
+    max-width: 95%;
+    margin: 30px auto;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 15px 2px rgba(0, 0, 0, 0.25);
+    border-radius: 14px;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+/* Изображение материала */
+.material-image {
+    width: 270px;
+    height: auto;
+    flex-shrink: 0;
+}
+
+.material-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+/* Контейнер информации о материале */
+.material-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+/* Название материала */
+.material-title {
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 20px;
+    color: #000000;
+    margin-bottom: 20px;
+}
+
+/* Подробная информация */
+.material-details {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+    color: #000000;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+/* Блоки характеристик */
+.material-details div {
+    width: 166px; /* как в макете */
+}
