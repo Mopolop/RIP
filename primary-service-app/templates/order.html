@@ -1,21 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Корзина</title>
+    <link rel="stylesheet" href="/static/styles/order_style.css">
+</head>
+<body>
 <div class="container">
     <header class="header">
+        <div class="header-container">
         <div class="logo">
-            <img src="/static/img/home-icon.png" alt="Лого">
+            <a href="/">
+                <img src="http://localhost:9000/materials/home-icon.png" alt="Лого">
+            </a>
+        </div>
         </div>
     </header>
 
-    <div class="material-container">
-        <div class="material-image">
-            <img src="/static/img/{{.material.Image}}" alt="{{.material.Title}}">
-        </div>
-        <div class="material-info">
-            <div class="material-title">{{.material.Title}} {{.material.Description}}</div>
-            <div class="material-details">
-                <div>{{.material.Consumption}}</div>
-                <div>{{.material.Count}}</div>
-                <!-- Здесь можно добавить остальные характеристики -->
+    <div class="content">
+        <!-- Параметры -->
+        <div class="parameters-group">
+            <div class="parameters-header">Параметры (м)</div>
+
+            <div class="parameter-row">
+                <div class="parameter-label">Высота потолка</div>
+                <input type="text" class="parameter-input">
+            </div>
+
+            <div class="parameter-row">
+                <div class="parameter-label">Толщина стены</div>
+                <input type="text" class="parameter-input">
             </div>
         </div>
+
+        <!-- Контейнер для счетчика -->
+        <div class="order-header">
+            <div class="order-count">
+                {{len .order.Materials}} услуги
+            </div>
+        </div>
+
+        <!-- Материалы из заказа -->
+        <div class="order-materials">
+            {{range .order.Materials}}
+            <div class="card">
+                <div class="card-image">
+                    <img src="{{.Image}}" alt="{{.Title}}">
+                </div>
+                <div class="card-info">
+                    <div class="card-title">{{.Title}} {{.Description}}</div>  
+                    <div class="card-bottom">   
+                        <div class="card-volume">{{.Consumption}}</div>
+                        <div class="card-count">{{.Count}}</div>
+                    </div>
+                </div>
+                <input type="text" class="card-input" placeholder="Введите длину стены (м)">
+            </div>
+            {{end}}
+        </div>
+
     </div>
 </div>
+</body>
+</html>

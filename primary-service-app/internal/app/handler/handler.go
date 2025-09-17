@@ -16,41 +16,71 @@ func NewHandler(r *repository.Repository) *Handler {
 	return &Handler{Repository: r}
 }
 
-func (h *Handler) GetOrders(ctx *gin.Context) {
-	searchQuery := ctx.Query("query") // получение строки поиска
+func (h *Handler) GetMaterials(ctx *gin.Context) {
+	searchQuery := ctx.Query("query")
 	var materials []repository.Material
 	var err error
 
 	if searchQuery == "" {
-		materials, err = h.Repository.GetMaterials() // все материалы
+		materials, err = h.Repository.GetMaterials()
 	} else {
-		materials, err = h.Repository.GetMaterialsByTitle(searchQuery) // фильтр по названию
+		materials, err = h.Repository.GetMaterialsByTitle(searchQuery)
 	}
 
 	if err != nil {
 		logrus.Error(err)
 	}
 
-	// Передаём в шаблон index.html: список материалов и строку поиска
-	ctx.HTML(http.StatusOK, "index.html", gin.H{
-		"materials": materials,
-		"query":     searchQuery,
+	// получаем заказ, чтобы посчитать количество товаров
+	order, _ := h.Repository.GetOrder()
+	orderCount := len(order.Materials)
+
+	ctx.HTML(http.StatusOK, "materials_list.html", gin.H{
+		"materials":  materials,
+		"query":      searchQuery,
+		"orderCount": orderCount,
 	})
 }
 
-func (h *Handler) GetOrder(ctx *gin.Context) {
+// Получение конкретного материала / услуги по ID
+func (h *Handler) GetMaterial(ctx *gin.Context) {
 	idStr := ctx.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		logrus.Error(err)
+		ctx.String(http.StatusBadRequest, "Invalid ID")
+		return
 	}
 
 	material, err := h.Repository.GetMaterial(id)
 	if err != nil {
 		logrus.Error(err)
+		ctx.String(http.StatusNotFound, "Material not found")
+		return
+	}
+
+	ctx.HTML(http.StatusOK, "detailed_material.html", gin.H{
+		"material": material,
+	})
+}
+
+func (h *Handler) GetOrder(ctx *gin.Context) {
+	idStr := ctx.Query("id") // получаем id из query, например /order?id=1
+	id, err := strconv.Atoi(idStr)
+	if err != nil || id != 1 { // пока у нас только один заказ с ID=1
+		logrus.Error("Invalid order ID")
+		ctx.String(http.StatusBadRequest, "Invalid order ID")
+		return
+	}
+
+	order, err := h.Repository.GetOrder()
+	if err != nil {
+		logrus.Error(err)
+		ctx.String(http.StatusInternalServerError, "Unable to get order")
+		return
 	}
 
 	ctx.HTML(http.StatusOK, "order.html", gin.H{
-		"material": material,
+		"order": order,
 	})
 }

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{.material.Title}}</title>
+    <link rel="stylesheet" href="/static/styles/detailed_material_style.css">
+</head>
+<body>
+<div class="container">
+
+    <!-- Хедер -->
+    <header class="header">
+        <div class="header-container">
+        <div class="logo">
+            <a href="/" class="logo-link">
+                <img src="http://localhost:9000/materials/home-icon.png" alt="Лого">
+            </a>
+        </div>
+    </header>
+
+    <!-- Контейнер материала -->
+    <div class="material-container">
+
+        <!-- Изображение материала -->
+        <div class="material-image">
+            <img src="{{.material.Image}}" alt="{{.material.Title}}">
+        </div>
+
+        <!-- Информационная рамка -->
+<div class="material-info-wrapper">
+
+    <!-- Название и описание -->
+    <div class="material-title">
+        {{.material.Title}} {{.material.Description}}
+    </div>
+
+    <!-- Характеристики -->
+    <div class="material-details">
+        <div>
+            <span class="name">Основной материал</span>
+            <span class="value">{{.material.MainMaterial}}</span>
+        </div>
+        <div>
+            <span class="name">Количество на м²</span>
+            <span class="value">{{.material.CountPerM2}}</span>
+        </div>
+        <div>
+            <span class="name">Количество на м³</span>
+            <span class="value">{{.material.CountPerM3}}</span>
+        </div>
+        <div>
+            <span class="name">Вес нетто</span>
+            <span class="value">{{.material.NetWeight}}</span>
+        </div>
+        <div>
+            <span class="name">Длина</span>
+            <span class="value">{{.material.LengthMM}} мм</span>
+        </div>
+        <div>
+            <span class="name">Высота</span>
+            <span class="value">{{.material.HeightMM}} мм</span>
+        </div>
+        <div>
+            <span class="name">Ширина</span>
+            <span class="value">{{.material.WidthMM}} мм</span>
+        </div>
+        <div>
+            <span class="name">Страна производства</span>
+            <span class="value">{{.material.Country}}</span>
+        </div>
+    </div>
+
+</div>
+
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

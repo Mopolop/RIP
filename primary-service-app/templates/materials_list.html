@@ -3,28 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <title>Стройматериалы</title>
-    <link rel="stylesheet" href="/static/styles/index_style.css">
+    <link rel="stylesheet" href="/static/styles/materials_list_style.css">
 </head>
 <body>
 <div class="container">
     <header class="header">
+          <div class="header-container">
         <div class="logo">
-            <img src="/static/img/home-icon.png" alt="Лого">
+            <a href="/">
+            <img src="http://localhost:9000/materials/home-icon.png" alt="Лого">
+        </a>
+        </div>
         </div>
     </header>
 
     <!-- Поиск и корзина -->
     <div class="search-container">
         <form action="/" method="get" class="search">
-            <img src="/static/img/search-icon.png" alt="Поиск" class="search-icon">
+            <img src="http://localhost:9000/materials/search-icon.png" alt="Поиск" class="search-icon">
             <input type="text" name="query" placeholder="Поиск" value="{{.query}}">
             <button type="submit" style="display:none;"></button>
         </form>
 
+        <a href="/order?id=1" class="card-link">
         <div class="cart">
-            <img src="/static/img/cart-icon.png" alt="Корзина">
-            <div class="cart-count-badge">0</div>
+            <img src="http://localhost:9000/materials/cart-icon.png" alt="Корзина">
+            <div class="cart-count-badge">2</div>
         </div>
+        </a>
     </div>
 </div>
 
@@ -32,10 +38,10 @@
 <div class="container">
     <div class="catalog">
         {{range .materials}}
-        <a href="/order/{{.ID}}" class="card-link">
+        <a href="/detailed_material/{{.ID}}" class="card-link">
             <div class="card">
                 <div class="card-image">
-                    <img src="/static/img/{{.Image}}" alt="{{.Title}}">
+                    <img src="{{.Image}}" alt="{{.Title}}">
                 </div>
                 <div class="card-info">
                     <div class="card-title">{{.Title}} {{.Description}}</div>

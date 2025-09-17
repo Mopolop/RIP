@@ -24,10 +24,10 @@ func StartServer() {
 	r.Static("/static", "./resources")
 	r.LoadHTMLGlob("templates/*")
 
-	// Добавляем корневой маршрут
-	r.GET("/", handler.GetOrders)
-	r.GET("/materials", handler.GetOrders)
-	r.GET("/order/:id", handler.GetOrder)
+	r.GET("/", handler.GetMaterials) // список материалов
+	r.GET("/materials", handler.GetMaterials)
+	r.GET("/detailed_material/:id", handler.GetMaterial) // конкретный материал
+	r.GET("/order", handler.GetOrder)                    // всегда открывает единственную заявк
 
 	r.Run() // listen and serve on 0.0.0.0:8080
 	log.Println("Server down")
