@@ -21,11 +21,11 @@
     <div class="search-container">
         <form action="/" method="get" class="search">
             <img src="http://localhost:9000/materials/search-icon.png" alt="Поиск" class="search-icon">
-            <input type="text" name="query" placeholder="Поиск" value="{{.query}}">
+            <input type="text" name="material_search" placeholder="Поиск" value="{{.query}}">
             <button type="submit" style="display:none;"></button>
         </form>
 
-        <a href="/order?id=1" class="card-link">
+        <a href="/materials_order/1" class="card-link">
         <div class="cart">
             <img src="http://localhost:9000/materials/cart-icon.png" alt="Корзина">
             <div class="cart-count-badge">2</div>

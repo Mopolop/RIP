@@ -27,7 +27,7 @@ func StartServer() {
 	r.GET("/", handler.GetMaterials) // список материалов
 	r.GET("/materials", handler.GetMaterials)
 	r.GET("/detailed_material/:id", handler.GetMaterial) // конкретный материал
-	r.GET("/order", handler.GetOrder)                    // всегда открывает единственную заявк
+	r.GET("/materials_order/:id", handler.GetOrder)
 
 	r.Run() // listen and serve on 0.0.0.0:8080
 	log.Println("Server down")

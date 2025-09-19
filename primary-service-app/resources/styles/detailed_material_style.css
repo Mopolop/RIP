@@ -13,6 +13,7 @@ body {
 /* Шапка */
 .header {
     padding: 24px 0;
+    margin-left: -8px;
 }
 
 /* Внутренний контейнер для выравнивания содержимого */
@@ -20,6 +21,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: flex-start; /* логотип всегда слева */
+     margin-bottom: -50px;
 }
 
 /* Логотип */

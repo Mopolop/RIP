@@ -17,7 +17,7 @@ func NewHandler(r *repository.Repository) *Handler {
 }
 
 func (h *Handler) GetMaterials(ctx *gin.Context) {
-	searchQuery := ctx.Query("query")
+	searchQuery := ctx.Query("material_search")
 	var materials []repository.Material
 	var err error
 
@@ -65,9 +65,9 @@ func (h *Handler) GetMaterial(ctx *gin.Context) {
 }
 
 func (h *Handler) GetOrder(ctx *gin.Context) {
-	idStr := ctx.Query("id") // получаем id из query, например /order?id=1
+	idStr := ctx.Param("id") // теперь URL: /materials_order/1
 	id, err := strconv.Atoi(idStr)
-	if err != nil || id != 1 { // пока у нас только один заказ с ID=1
+	if err != nil || id != 1 {
 		logrus.Error("Invalid order ID")
 		ctx.String(http.StatusBadRequest, "Invalid order ID")
 		return
@@ -80,7 +80,7 @@ func (h *Handler) GetOrder(ctx *gin.Context) {
 		return
 	}
 
-	ctx.HTML(http.StatusOK, "order.html", gin.H{
+	ctx.HTML(http.StatusOK, "materials_order.html", gin.H{
 		"order": order,
 	})
 }

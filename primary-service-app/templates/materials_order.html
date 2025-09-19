@@ -18,20 +18,21 @@
     </header>
 
     <div class="content">
-        <!-- Параметры -->
-        <div class="parameters-group">
-            <div class="parameters-header">Параметры (м)</div>
+       <!-- Параметры -->
+<div class="parameters-group">
+    <div class="parameters-header">Параметры (м)</div>
 
-            <div class="parameter-row">
-                <div class="parameter-label">Высота потолка</div>
-                <input type="text" class="parameter-input">
-            </div>
+    <div class="parameter-row">
+        <div class="parameter-label">Высота потолка</div>
+        <input type="text" class="parameter-input" value="{{.order.CeilingHeight}}">
+    </div>
 
-            <div class="parameter-row">
-                <div class="parameter-label">Толщина стены</div>
-                <input type="text" class="parameter-input">
-            </div>
-        </div>
+    <div class="parameter-row">
+        <div class="parameter-label">Толщина стены</div>
+        <input type="text" class="parameter-input" value="{{.order.WallThickness}}">
+    </div>
+</div>
+
 
         <!-- Контейнер для счетчика -->
         <div class="order-header">
@@ -54,7 +55,7 @@
                         <div class="card-count">{{.Count}}</div>
                     </div>
                 </div>
-                <input type="text" class="card-input" placeholder="Введите длину стены (м)">
+                <input type="text" class="card-input" placeholder="Введите длину стены (м)" value="{{index $.order.PredefinedMM .ID}}">
             </div>
             {{end}}
         </div>

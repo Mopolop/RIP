@@ -30,8 +30,11 @@ type Material struct {
 }
 
 type Order struct {
-	ID        int
-	Materials []Material
+	ID            int
+	Materials     []Material
+	PredefinedMM  map[int]string
+	CeilingHeight string // высота потолка
+	WallThickness string // толщина стены
 }
 
 func (r *Repository) GetMaterials() ([]Material, error) {
@@ -196,6 +199,16 @@ func (r *Repository) GetOrder() (Order, error) {
 	order := Order{
 		ID:        1,
 		Materials: []Material{materials[0], materials[1]}, // единственная заявка
+
+		// захардкоженные параметры
+		CeilingHeight: "2.8", // метра
+		WallThickness: "0.4", // метра
+
+		// длина стены по каждому материалу
+		PredefinedMM: map[int]string{
+			1: "5.5", // Кирпич красный → 5.5 м
+			2: "4.2", // Блок газобетонный → 4.2 м
+		},
 	}
 
 	return order, nil
