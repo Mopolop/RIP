@@ -1,0 +1,155 @@
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Единый контейнер */
+.container {
+    max-width: calc(236px * 4 + 20px * 3); /* ширина каталога */
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Шапка */
+.header {
+    padding: 24px 0;
+    margin-left: -8px;
+}
+
+/* Внутренний контейнер для выравнивания содержимого */
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* логотип всегда слева */
+     margin-bottom: -50px;
+}
+
+/* Логотип */
+.logo img {
+    width: 250px;
+    height: auto;
+    display: block;
+}
+
+
+/* Контейнер материала (внутри .container) */
+.material-container {
+    display: flex;
+    flex-direction: row;
+    gap: 100px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0px;
+    min-height: 600px;
+}
+
+/* Изображение материала без рамки */
+.material-image {
+    flex-shrink: 0;
+    width: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: -26px;
+}
+
+.material-image img {
+    width: 400px;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 3px;
+}
+
+/* Рамка */
+.material-info-wrapper {
+    background: #FFFFFF;
+    box-shadow: 0px 4px 15px 2px rgba(0, 0, 0, 0.25);
+    border-radius: 14px;
+    padding: 30px 25px;
+    box-sizing: border-box;
+    flex: 0 1 500px;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column; /* колонки: сверху заголовок, ниже контент */
+    align-items: center;
+    justify-content: flex-start; /* заголовок остаётся сверху */
+    gap: 20px;
+}
+
+/* Контейнер информации */
+.material-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;    /* всё по центру по горизонтали */
+    justify-content: center;/* всё по центру по вертикали */
+    gap: 20px;
+    text-align: center;     /* текст внутри тоже по центру */
+    width: 100%;
+    max-width: 400px;
+}
+
+
+/* Заголовок */
+.material-title {
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1.4;
+    color: #000;
+    margin-bottom: 10px;
+    text-align: center;
+    width: 100%;
+}
+
+
+/* Контейнер характеристик */
+.material-details {
+    flex: 1; /* занимает оставшееся место в рамке */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;  /* центрирование по вертикали */
+    align-items: stretch;     /* растягиваем строки по ширине */
+    gap: 12px;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 22px;
+    color: #000;
+    width: 100%;
+    max-width: 400px; /* чтобы текст не растягивался слишком широко */
+    margin: 0 auto;   /* центрируем блок внутри рамки */
+}
+
+/* Каждая строка характеристик */
+.material-details div {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 100px; /* расстояние между колонками */
+}
+
+/* Название характеристики */
+.material-details div span.name {
+    flex: 0 0 160px;  /* фиксированная ширина левого столбца */
+    font-weight: 500;
+    text-align: left; /* выравнивание текста по левому краю */
+}
+
+
+/* Значение характеристики */
+.material-details div span.value {
+    flex: 1;             /* занимает оставшееся пространство */
+    text-align: center;  /* теперь значение по центру своей колонки */
+}
+
+/* Ссылка-карточка */
+.material-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Ссылка для логотипа */
+.logo-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Стройматериалы</title>
+    <link rel="stylesheet" href="/static/styles/materials_list_style.css">
+</head>
+<body>
+<div class="container">
+    <header class="header">
+          <div class="header-container">
+        <div class="logo">
+            <a href="/">
+            <img src="http://localhost:9000/materials/home-icon.png" alt="Лого">
+        </a>
+        </div>
+        </div>
+    </header>
+
+    <!-- Поиск и корзина -->
+    <div class="search-container">
+        <form action="/" method="get" class="search">
+            <img src="http://localhost:9000/materials/search-icon.png" alt="Поиск" class="search-icon">
+            <input type="text" name="material_search" placeholder="Поиск" value="{{.query}}">
+            <button type="submit" style="display:none;"></button>
+        </form>
+
+        <a href="/materials_order/1" class="card-link">
+        <div class="cart">
+            <img src="http://localhost:9000/materials/cart-icon.png" alt="Корзина">
+            <div class="cart-count-badge">2</div>
+        </div>
+        </a>
+    </div>
+</div>
+
+<!-- Каталог товаров -->
+<div class="container">
+    <div class="catalog">
+        {{range .materials}}
+        <a href="/detailed_material/{{.ID}}" class="card-link">
+            <div class="card">
+                <div class="card-image">
+                    <img src="{{.Image}}" alt="{{.Title}}">
+                </div>
+                <div class="card-info">
+                    <div class="card-title">{{.Title}} {{.Description}}</div>
+                    <div class="card-volume">{{.Consumption}}</div>
+                    <div class="card-count">{{.Count}}</div>
+                </div>
+            </div>
+        </a>
+        {{end}}
+    </div>
+</div>
+</body>
+</html>

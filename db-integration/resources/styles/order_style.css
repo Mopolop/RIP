@@ -1,0 +1,213 @@
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Единый контейнер */
+.container {
+    max-width: calc(236px * 4 + 20px * 3); /* ширина каталога */
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Шапка */
+.header {
+    padding: 24px 0;
+    margin-left: -7px;
+}
+
+/* Внутренний контейнер для выравнивания содержимого */
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* логотип всегда слева */
+}
+
+/* Логотип */
+.logo img {
+    width: 250px;
+    height: auto;
+    display: block;
+}
+
+/* Основной контент */
+.content {
+    display: flex;
+    flex-direction: column; /* вертикальный поток */
+    align-items: center; /* центрируем контент по горизонтали */
+    padding: 0;
+    margin: 0;
+}
+
+/* Группа параметров */
+.parameters-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 300px;
+    align-items: center;
+}
+
+/* Заголовок параметров */
+.parameters-header {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 24px;
+    color: #000000;
+    text-align: center;
+}
+
+/* Строка параметра */
+.parameter-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.parameter-label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: #000000;
+    text-align: right;
+    white-space: nowrap; /* запрет переносов */
+}
+
+
+/* Поля ввода */
+.parameter-input {
+    flex: 1;
+    box-sizing: border-box;
+    height: 24px;
+    padding: 0 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    border: 1px solid #E3E1D8;
+    border-radius: 4px;
+}
+
+/* Общий контейнер для карточек заказа */
+.order-materials {
+    display: flex;
+    flex-direction: column; /* карточки идут в колонку */
+    margin-top: 20px;
+    width: 100%;
+    align-items: flex-start;
+}
+
+/* Карточка товара */
+.order-materials .card {
+    display: flex;
+    align-items: center; /* центрируем все элементы по вертикали */
+    width: 100%;
+    padding: 16px;
+    background: #FFFFFF;
+    box-sizing: border-box;
+    gap: 20px; /* расстояние между колонками */
+    border-top: 1px solid #E3E1D8;    /* верхняя граница */
+    border-bottom: 1px solid #E3E1D8; /* нижняя граница */
+    border-left: none;  /* убираем левую */
+    border-right: none; /* убираем правую */
+    height: auto;       /* пусть высота подстраивается под содержимое */
+    border-radius: 0;   /* убираем скругления */
+}
+
+
+/* Изображение товара */
+.order-materials .card-image img {
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* Контейнер информации */
+.order-materials .card-info {
+    display: flex;
+    flex: 1;
+    align-items: center; /* центрируем по вертикали */
+    justify-content: space-between; /* разделяем левую и правую колонку */
+}
+
+/* Левая колонка: название и поле ввода */
+.card-info-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* по центру вертикально */
+
+    flex: 1;
+}
+
+/* Название материала */
+.card-info-left .card-title {
+    font-weight: 400;
+    font-size: 28px;
+    color: #000000;
+    word-wrap: break-word; /* перенос текста */
+}
+
+/* Поле ввода количества / длины стены */
+.card-input {
+    width: 250px;     /* увеличена ширина */
+    height: 36px;     /* чуть выше */
+    padding: 0 10px;  /* больше внутреннего отступа */
+    font-size: 16px;  /* чуть крупнее шрифт */
+    border: 1px solid #E3E1D8;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+
+/* Правая колонка: расход и количество */
+.card-info-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* по центру вертикально */
+    gap: 4px;
+    flex: 0 0 120px; /* фиксированная ширина */
+    align-items: flex-start; /* выравнивание текста слева */
+}
+
+.card-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* расстояние между расходом и количеством */
+}
+
+
+/* Расход раствора */
+.card-volume {
+    font-weight: 700;
+    font-size: 20px;
+    color: #000000; 
+    white-space: nowrap; /* запрет переносов */
+}
+    
+
+/* Количество штук */
+.card-count {
+    font-weight: 400;
+    font-size: 14px;
+    color: #959595;
+}
+
+/* Контейнер для карточек и счетчика */
+.order-header {
+    display: flex;
+    align-items: center; /* по вертикали с карточками */
+    margin-top: 20px;   /* отступ от параметров */
+}
+
+/* Счетчик товаров */
+.order-count {
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    color: #696969;
+    margin-left: -475px; /* выравнивание по левому краю контейнера */
+    
+}
