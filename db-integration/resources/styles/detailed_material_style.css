@@ -5,7 +5,7 @@ body {
 
 /* Единый контейнер */
 .container {
-    max-width: calc(236px * 4 + 20px * 3); /* ширина каталога */
+    max-width: calc(240px * 4 + 20px * 3); /* ширина каталога */
     margin: 0 auto;
     padding: 0 20px;
 }
@@ -13,7 +13,6 @@ body {
 /* Шапка */
 .header {
     padding: 24px 0;
-    margin-left: -8px;
 }
 
 /* Внутренний контейнер для выравнивания содержимого */

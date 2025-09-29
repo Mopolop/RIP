@@ -125,7 +125,7 @@ body {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    height: 360px;
+    /* height: 360px; */
 }
 
 /* Картинка по центру */
@@ -147,10 +147,10 @@ body {
 .card-info {
     display: flex;
     flex-direction: column;
-    width: 100%;
-    height: 100%; /* Занимает всю высоту карточки */
-    flex-grow: 1; /* Растягивается на все доступное пространство */
+    justify-content: space-between; /* заголовок сверху, расход/кол-во снизу */
+    flex-grow: 1;
 }
+
 
 .card-title {
     font-family: 'Inter', sans-serif;
@@ -197,4 +197,40 @@ body {
     text-decoration: none; /* Убираем подчеркивание */
     color: inherit;        /* Наследуем цвет текста */
     height: 100%;
+}
+
+/* Кнопка добавления в заказ */
+.card-button {
+    background-color: #000000; /* черная кнопка */
+    font-size: 14px;
+    height: 36px; /* немного меньше */
+    line-height: 20px;
+    margin-top: 10px;
+
+    border: none;
+    border-radius: 3px;
+    width: 90%; /* чуть меньше ширины карточки */
+    text-align: center; /* надпись по центру кнопки */
+    
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    color: #ffffff; /* белый текст */
+
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+/* Наведение и клик */
+.card-button:hover {
+    background-color: #222222;
+}
+
+.card-button:active {
+    transform: scale(0.98);
+}
+
+/* Выравнивание кнопки влево */
+.card-button-container {
+    display: flex;
+    justify-content: flex-start; /* прижать к левому краю */
 }

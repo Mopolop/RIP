@@ -4,8 +4,6 @@ import (
 	"db-integration/internal/app/repository"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"net/http"
-	"strconv"
 )
 
 type Handler struct {
@@ -13,74 +11,30 @@ type Handler struct {
 }
 
 func NewHandler(r *repository.Repository) *Handler {
-	return &Handler{Repository: r}
+	return &Handler{
+		Repository: r,
+	}
 }
 
-func (h *Handler) GetMaterials(ctx *gin.Context) {
-	searchQuery := ctx.Query("material_search")
-	var materials []repository.Material
-	var err error
-
-	if searchQuery == "" {
-		materials, err = h.Repository.GetMaterials()
-	} else {
-		materials, err = h.Repository.GetMaterialsByTitle(searchQuery)
-	}
-
-	if err != nil {
-		logrus.Error(err)
-	}
-
-	// получаем заказ, чтобы посчитать количество товаров
-	order, _ := h.Repository.GetOrder()
-	orderCount := len(order.Materials)
-
-	ctx.HTML(http.StatusOK, "materials_list.html", gin.H{
-		"materials":  materials,
-		"query":      searchQuery,
-		"orderCount": orderCount,
-	})
+// RegisterHandler регистрируем маршруты
+func (h *Handler) RegisterHandler(router *gin.Engine) {
+	router.GET("/", h.GetMaterials)
+	router.GET("/materials", h.GetMaterials)
+	router.GET("/detailed_material/:id", h.GetMaterial)
+	router.GET("/materials_order/:id", h.GetOrder)
 }
 
-// Получение конкретного материала / услуги по ID
-func (h *Handler) GetMaterial(ctx *gin.Context) {
-	idStr := ctx.Param("id")
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		logrus.Error(err)
-		ctx.String(http.StatusBadRequest, "Invalid ID")
-		return
-	}
-
-	material, err := h.Repository.GetMaterial(id)
-	if err != nil {
-		logrus.Error(err)
-		ctx.String(http.StatusNotFound, "Material not found")
-		return
-	}
-
-	ctx.HTML(http.StatusOK, "detailed_material.html", gin.H{
-		"material": material,
-	})
+// RegisterStatic регистрирует статические файлы и шаблоны
+func (h *Handler) RegisterStatic(router *gin.Engine) {
+	router.LoadHTMLGlob("templates/*")
+	router.Static("/static", "./resources")
 }
 
-func (h *Handler) GetOrder(ctx *gin.Context) {
-	idStr := ctx.Param("id") // теперь URL: /materials_order/1
-	id, err := strconv.Atoi(idStr)
-	if err != nil || id != 1 {
-		logrus.Error("Invalid order ID")
-		ctx.String(http.StatusBadRequest, "Invalid order ID")
-		return
-	}
-
-	order, err := h.Repository.GetOrder()
-	if err != nil {
-		logrus.Error(err)
-		ctx.String(http.StatusInternalServerError, "Unable to get order")
-		return
-	}
-
-	ctx.HTML(http.StatusOK, "materials_order.html", gin.H{
-		"order": order,
+// errorHandler для удобного вывода ошибок
+func (h *Handler) errorHandler(ctx *gin.Context, errorStatusCode int, err error) {
+	logrus.Error(err.Error())
+	ctx.JSON(errorStatusCode, gin.H{
+		"status":      "error",
+		"description": err.Error(),
 	})
 }
