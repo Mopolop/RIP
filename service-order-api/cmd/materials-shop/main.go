@@ -1,20 +1,18 @@
 package main
 
 import (
-	"fmt"
-
 	"db-integration/internal/app/config"
 	"db-integration/internal/app/dsn"
 	"db-integration/internal/app/handler"
 	"db-integration/internal/app/repository"
 	"db-integration/internal/pkg"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
 
-// main инициализирует конфигурацию, репозиторий, хендлеры и запускает приложение
 func main() {
-	router := gin.Default() // создание нового роутера Gin
+	router := gin.Default()
 
 	// Загрузка конфигурации приложения
 	conf, err := config.NewConfig()
@@ -24,12 +22,18 @@ func main() {
 
 	// Получение строки подключения к PostgreSQL
 	postgresString := dsn.FromEnv()
-	fmt.Println(postgresString)
+	fmt.Println("Postgres DSN:", postgresString)
 
-	// Инициализация репозитория
-	rep, errRep := repository.New(postgresString)
-	if errRep != nil {
-		logrus.Fatalf("error initializing repository: %v", errRep)
+	// Инициализация репозитория с MinIO
+	rep, err := repository.New(
+		postgresString,
+		conf.Minio.Endpoint,
+		conf.Minio.AccessKey,
+		conf.Minio.SecretKey,
+		conf.Minio.Bucket,
+	)
+	if err != nil {
+		logrus.Fatalf("error initializing repository: %v", err)
 	}
 
 	// Создание хендлера с подключённым репозиторием

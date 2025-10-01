@@ -23,9 +23,18 @@ func (h *Handler) RegisterHandler(router *gin.Engine) {
 	router.GET("/", h.GetMaterials)
 	router.GET("/detailed_material/:id", h.GetMaterial)
 	router.GET("/materials_order/:id", h.GetMaterialsOrder)
+	router.GET("/api/material/:id", h.GetMaterialAPI)
+	router.GET("/api/materials", h.GetMaterialsAPI)
 
 	router.POST("/orders/draft/add/:id", h.AddMaterialToDraftOrder)
 	router.POST("/orders/delete/:id", h.DeleteMaterialsOrder)
+	router.POST("/api/material", h.CreateMaterialAPI)
+	router.POST("/api/orders/draft/add/:id", h.AddMaterialToDraftOrderAPI)
+	router.POST("/api/material/:id/image", h.UploadMaterialImage)
+
+	router.PUT("/api/material/:id", h.UpdateMaterialAPI)
+
+	router.DELETE("/api/material/:id", h.DeleteMaterialAPI)
 
 }
 
