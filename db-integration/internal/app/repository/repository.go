@@ -28,13 +28,3 @@ func New(dsn string) (*Repository, error) {
 
 	return &Repository{db: db}, nil
 }
-
-func (r *Repository) GetOrderMaterialsCount(orderID int) (int, error) {
-	var count int64
-	if err := r.db.Model(&ds.MaterialMaterialOrder{}).
-		Where("material_order_id = ?", orderID).
-		Count(&count).Error; err != nil {
-		return 0, err
-	}
-	return int(count), nil
-}

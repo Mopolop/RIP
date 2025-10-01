@@ -1,13 +1,14 @@
 package handler
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
-// Получение заказа по ID
-func (h *Handler) GetOrder(ctx *gin.Context) {
+// POST /orders/delete/:id - пометить заказ как удалённый
+func (h *Handler) DeleteMaterialsOrder(ctx *gin.Context) {
 	idStr := ctx.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -15,14 +16,11 @@ func (h *Handler) GetOrder(ctx *gin.Context) {
 		return
 	}
 
-	order, mmos, err := h.Repository.GetOrderByID(id)
-	if err != nil {
-		h.errorHandler(ctx, http.StatusNotFound, err)
+	if err := h.Repository.SetOrderStatus(id, "удален"); err != nil {
+		h.errorHandler(ctx, http.StatusInternalServerError, err)
 		return
 	}
 
-	ctx.HTML(http.StatusOK, "materials_order.html", gin.H{
-		"order":     order,
-		"materials": mmos, // вот сюда прокидываем список материалов
-	})
+	// После удаления можно редиректить на главную
+	ctx.Redirect(http.StatusSeeOther, "/")
 }

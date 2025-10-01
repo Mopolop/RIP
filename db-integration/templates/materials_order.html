@@ -36,8 +36,8 @@
 
         <!-- Контейнер для счетчика -->
        <div class="order-header">
-    <div class="order-count">
-        {{len .materials}} услуги
+       <div class="order-count">
+        {{len .materials}} {{plural (len .materials) "услуга" "услуги" "услуг"}}
     </div>
 </div>
 
@@ -58,6 +58,15 @@
     </div>
     {{end}}
 </div>
+
+
+    {{if gt .order.ID 0}}
+    <div class="order-actions" style="margin-top:20px;">
+        <form action="/orders/delete/{{.order.ID}}" method="post">
+            <button class="delete-button">Удалить заявку</button>
+        </form>
+    </div>
+    {{end}}
 
 
     </div>

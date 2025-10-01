@@ -211,3 +211,31 @@ body {
     margin-left: -475px; /* выравнивание по левому краю контейнера */
     
 }
+
+/* Кнопка удаления заказа — стиль похож на кнопку "В корзину" */
+.delete-button {
+    background-color: #21282b; /* черная кнопка */
+    font-size: 14px;
+    height: 36px;
+    line-height: 20px;
+    margin-bottom: 20px;
+
+    border: none;
+    border-radius: 3px;
+    width: 200px; /* фиксированная ширина кнопки удаления */
+    text-align: center;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    color: #ffffff;
+
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.delete-button:hover {
+    background-color: #000000;
+}
+
+.delete-button:active {
+    transform: scale(0.98);
+}

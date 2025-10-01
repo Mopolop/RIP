@@ -25,12 +25,14 @@
             <button type="submit" style="display:none;"></button>
         </form>
 
-        <a href="/materials_order/1" class="card-link">
-        <div class="cart">  
-            <img src="http://localhost:9000/materials/cart-icon.png" alt="Корзина">
-            <div class="cart-count-badge">{{.orderCount}}</div>
-        </div>
-        </a>
+       <a href="/materials_order/{{.orderID}}" class="card-link">
+    <div class="cart">  
+        <img src="http://localhost:9000/materials/cart-icon.png" alt="Корзина">
+        <div class="cart-count-badge">{{.orderCount}}</div>
+    </div>
+</a>
+
+
     </div>
 </div>
 
@@ -52,12 +54,11 @@
 
         <!-- Кнопка добавления в заказ -->
         
-        <form action="/orders/draft/add/{{.ID}}" method="post">
-            <div class="card-button-container">
-    <button class="card-button">В корзину</button>
-</div>
-
-        </form>
+       <form action="/orders/draft/add/{{.ID}}" method="post">
+    <div class="card-button-container">
+        <button class="card-button">В корзину</button>
+    </div>
+</form>
     </div>
     {{end}}
 </div>

@@ -85,6 +85,7 @@ body {
     justify-content: center;
     margin-left: 10px;
     flex-shrink: 0;
+    transition: background-color 0.15s ease;
 }
 
 .cart-count-badge {
@@ -106,6 +107,11 @@ body {
 .cart img {
     width: 28px;
     height: 28px;
+}
+
+/* Hover для корзины */
+.cart:hover {
+    background: #e79f26;
 }
 
 /* Контейнер каталога */
@@ -201,7 +207,7 @@ body {
 
 /* Кнопка добавления в заказ */
 .card-button {
-    background-color: #000000; /* черная кнопка */
+    background-color: #21282b; /* черная кнопка */
     font-size: 14px;
     height: 36px; /* немного меньше */
     line-height: 20px;
@@ -222,7 +228,7 @@ body {
 
 /* Наведение и клик */
 .card-button:hover {
-    background-color: #222222;
+    background-color: #000000;
 }
 
 .card-button:active {
