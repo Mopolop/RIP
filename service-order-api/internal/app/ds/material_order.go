@@ -18,3 +18,16 @@ type MaterialOrder struct {
 	Creator       User            `gorm:"foreignKey:CreatorID;references:ID"`   // связь с пользователем-автором
 	Moderator     User            `gorm:"foreignKey:ModeratorID;references:ID"` // связь с пользователем-модератором
 }
+
+type OrderResponse struct {
+	ID         int        `json:"id"`
+	Status     string     `json:"status"`
+	DateCreate time.Time  `json:"date_create"`
+	DateForm   *time.Time `json:"date_form,omitempty"`
+	DateFinish *time.Time `json:"date_finish,omitempty"`
+}
+
+type UpdateOrderRequest struct {
+	CeilingHeight *float64 `json:"ceiling_height,omitempty"`
+	WallThickness *float64 `json:"wall_thickness,omitempty"`
+}

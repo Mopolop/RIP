@@ -25,6 +25,9 @@ func (h *Handler) RegisterHandler(router *gin.Engine) {
 	router.GET("/materials_order/:id", h.GetMaterialsOrder)
 	router.GET("/api/material/:id", h.GetMaterialAPI)
 	router.GET("/api/materials", h.GetMaterialsAPI)
+	router.GET("/api/orders/draft/cart", h.GetDraftCartAPI)
+	router.GET("/api/orders", h.GetOrdersAPI)
+	router.GET("/api/orders/:id", h.GetOrderWithMaterialsAPI)
 
 	router.POST("/orders/draft/add/:id", h.AddMaterialToDraftOrder)
 	router.POST("/orders/delete/:id", h.DeleteMaterialsOrder)
@@ -33,6 +36,8 @@ func (h *Handler) RegisterHandler(router *gin.Engine) {
 	router.POST("/api/material/:id/image", h.UploadMaterialImage)
 
 	router.PUT("/api/material/:id", h.UpdateMaterialAPI)
+	router.PUT("/api/orders/:id", h.UpdateMaterialOrderAPI)
+	router.PUT("/api/orders/:id/form", h.FormMaterialOrderAPI)
 
 	router.DELETE("/api/material/:id", h.DeleteMaterialAPI)
 
