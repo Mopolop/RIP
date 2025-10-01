@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Корзина</title>
+    <link rel="stylesheet" href="/static/styles/order_style.css">
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <div class="header-container">
+        <div class="logo">
+            <a href="/">
+                <img src="http://localhost:9000/materials/home-icon.png" alt="Лого">
+            </a>
+        </div>
+        </div>
+    </header>
+
+    <div class="content">
+       <!-- Параметры -->
+<div class="parameters-group">
+    <div class="parameters-header">Параметры (м)</div>
+
+    <div class="parameter-row">
+        <div class="parameter-label">Высота потолка</div>
+        <input type="text" class="parameter-input" value="{{.order.CeilingHeight.Float64}}">
+    </div>
+
+    <div class="parameter-row">
+        <div class="parameter-label">Толщина стены</div>
+        <input type="text" class="parameter-input" value="{{.order.WallThickness.Float64}}">
+    </div>
+</div>
+
+
+        <!-- Контейнер для счетчика -->
+       <div class="order-header">
+       <div class="order-count">
+        {{len .materials}} {{plural (len .materials) "услуга" "услуги" "услуг"}}
+    </div>
+</div>
+
+<div class="order-materials">
+    {{range .materials}}
+    <div class="card">
+        <div class="card-image">
+            <img src="{{.Material.Image}}" alt="{{.Material.Title}}">
+        </div>
+        <div class="card-info">
+            <div class="card-title">{{.Material.Title}} {{.Material.Description}}</div>  
+            <div class="card-bottom">   
+                <div class="card-volume">{{.Material.Consumption}}</div>
+                <div class="card-count">{{.Material.Count}}</div>
+            </div>
+        </div>
+        <input type="text" class="card-input" placeholder="Введите длину стены (м)" value="{{.WallLength.Float64}}">
+    </div>
+    {{end}}
+</div>
+
+
+    {{if gt .order.ID 0}}
+    <div class="order-actions" style="margin-top:20px;">
+        <form action="/orders/delete/{{.order.ID}}" method="post">
+            <button class="delete-button">Удалить заявку</button>
+        </form>
+    </div>
+    {{end}}
+
+
+    </div>
+</div>
+</body>
+</html>
