@@ -17,7 +17,7 @@ import (
 
 func (r *Repository) GetMaterials() ([]ds.Material, error) {
 	var materials []ds.Material
-	result := r.db.Order("id ASC").Find(&materials)
+	result := r.db.Where("visability = ?", true).Order("id ASC").Find(&materials)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -26,7 +26,7 @@ func (r *Repository) GetMaterials() ([]ds.Material, error) {
 
 func (r *Repository) GetMaterialsByTitle(title string) ([]ds.Material, error) {
 	var materials []ds.Material
-	result := r.db.Where("LOWER(title) LIKE ?", "%"+strings.ToLower(title)+"%").Find(&materials)
+	result := r.db.Where("visability = ? AND LOWER(title) LIKE ?", true, "%"+strings.ToLower(title)+"%").Find(&materials)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -105,7 +105,7 @@ func (r *Repository) GetMaterialByID(id int) (*ds.Material, error) {
 // Получаем список материалов с опциональной фильтрацией по названию
 func (r *Repository) GetMaterialsFiltered(title string) ([]ds.Material, error) {
 	var materials []ds.Material
-	query := r.db.Model(&ds.Material{})
+	query := r.db.Model(&ds.Material{}).Where("visability = ?", true)
 	if title != "" {
 		query = query.Where("LOWER(title) LIKE ?", "%"+strings.ToLower(title)+"%")
 	}
@@ -135,17 +135,12 @@ func (r *Repository) UpdateMaterial(id int, updated *ds.Material) error {
 	return r.db.Model(&material).Updates(updated).Error
 }
 
-// Удаляем материал по ID
-func (r *Repository) DeleteMaterial(id int) error {
-	var material ds.Material
-	err := r.db.First(&material, id).Error
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil // материал не найден, можно считать успешным
-		}
-		return err
-	}
-	return r.db.Delete(&material).Error
+// Логическое удаление материала
+func (r *Repository) DeleteMaterialLogical(id int) error {
+	result := r.db.Model(&ds.Material{}).
+		Where("id = ?", id).
+		Update("visability", false)
+	return result.Error
 }
 
 // UploadMaterialImage загружает новое изображение материала в MinIO, удаляет старое, обновляет image_url

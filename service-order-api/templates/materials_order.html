@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Корзина</title>
-    <link rel="stylesheet" href="/static/styles/order_style.css">
+    <link rel="stylesheet" href="/static/styles/materials_order_style.css">
 </head>
 <body>
 <div class="container">
@@ -22,15 +22,18 @@
 <div class="parameters-group">
     <div class="parameters-header">Параметры (м)</div>
 
-    <div class="parameter-row">
-        <div class="parameter-label">Высота потолка</div>
-        <input type="text" class="parameter-input" value="{{.order.CeilingHeight.Float64}}">
-    </div>
+   <div class="parameter-row">
+    <div class="parameter-label">Высота потолка</div>
+    <input type="text" class="parameter-input"
+           value="{{if .order.CeilingHeight.Valid}}{{printf "%.2f" .order.CeilingHeight.Float64}}{{end}}">
+</div>
 
-    <div class="parameter-row">
-        <div class="parameter-label">Толщина стены</div>
-        <input type="text" class="parameter-input" value="{{.order.WallThickness.Float64}}">
-    </div>
+<div class="parameter-row">
+    <div class="parameter-label">Толщина стены</div>
+    <input type="text" class="parameter-input"
+           value="{{if .order.WallThickness.Valid}}{{printf "%.2f" .order.WallThickness.Float64}}{{end}}">
+</div>
+
 </div>
 
 
@@ -50,11 +53,12 @@
         <div class="card-info">
             <div class="card-title">{{.Material.Title}} {{.Material.Description}}</div>  
             <div class="card-bottom">   
-                <div class="card-volume">{{.Material.Consumption}}</div>
-                <div class="card-count">{{.Material.Count}}</div>
+                <div class="card-volume">{{.Material.Consumption}} м³ на 1 м³ кладки</div>
+                <div class="card-count">{{.Material.Count}} шт./м³</div>
             </div>
         </div>
-        <input type="text" class="card-input" placeholder="Введите длину стены (м)" value="{{.WallLength.Float64}}">
+        <input type="text" class="card-input" placeholder="Введите длину стены (м)" value="{{if .WallLength.Valid}}
+        {{printf "%.2f" .WallLength.Float64}}{{end}}">
     </div>
     {{end}}
 </div>

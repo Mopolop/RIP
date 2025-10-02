@@ -155,6 +155,15 @@ func (h *Handler) GetMaterialAPI(ctx *gin.Context) {
 		return
 	}
 
+	// Если материал найден, но он невидим — считаем, что он отсутствует
+	if !material.Visability {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":      "error",
+			"description": "материал не найден",
+		})
+		return
+	}
+
 	ctx.JSON(http.StatusOK, gin.H{
 		"status":   "success",
 		"material": material,
@@ -226,8 +235,8 @@ func (h *Handler) UpdateMaterialAPI(ctx *gin.Context) {
 	})
 }
 
-// DELETE /api/material/:id
-func (h *Handler) DeleteMaterialAPI(ctx *gin.Context) {
+// POST /api/material/:id/delete
+func (h *Handler) DeleteMaterialLogicalAPI(ctx *gin.Context) {
 	idStr := ctx.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -235,7 +244,7 @@ func (h *Handler) DeleteMaterialAPI(ctx *gin.Context) {
 		return
 	}
 
-	err = h.Repository.DeleteMaterial(id)
+	err = h.Repository.DeleteMaterialLogical(id)
 	if err != nil {
 		h.errorHandler(ctx, http.StatusInternalServerError, err)
 		return
@@ -243,7 +252,7 @@ func (h *Handler) DeleteMaterialAPI(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"status":  "success",
-		"message": "материал успешно удалён",
+		"message": "материал успешно скрыт",
 	})
 }
 

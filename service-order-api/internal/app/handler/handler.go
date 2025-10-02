@@ -34,12 +34,11 @@ func (h *Handler) RegisterHandler(router *gin.Engine) {
 	router.POST("/api/material", h.CreateMaterialAPI)
 	router.POST("/api/orders/draft/add/:id", h.AddMaterialToDraftOrderAPI)
 	router.POST("/api/material/:id/image", h.UploadMaterialImage)
+	router.POST("/api/material/:id/delete", h.DeleteMaterialLogicalAPI)
 
 	router.PUT("/api/material/:id", h.UpdateMaterialAPI)
 	router.PUT("/api/orders/:id", h.UpdateMaterialOrderAPI)
 	router.PUT("/api/orders/:id/form", h.FormMaterialOrderAPI)
-
-	router.DELETE("/api/material/:id", h.DeleteMaterialAPI)
 
 }
 

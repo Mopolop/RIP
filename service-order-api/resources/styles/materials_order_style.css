@@ -135,9 +135,10 @@ body {
 .card-info-left {
     display: flex;
     flex-direction: column;
-    justify-content: center; /* по центру вертикально */
+    justify-content: center;
 
-    flex: 1;
+    flex: 1 1 auto;   /* разрешаем расширяться и сжиматься */
+    min-width: 0;     /* важно! позволяет тексту переноситься внутри flex */
 }
 
 /* Название материала */
@@ -145,7 +146,11 @@ body {
     font-weight: 400;
     font-size: 28px;
     color: #000000;
-    word-wrap: break-word; /* перенос текста */
+
+    word-wrap: break-word;   /* перенос длинных слов */
+    overflow-wrap: break-word;
+    white-space: normal;     /* разрешаем переносы */
+    overflow: visible;       /* чтобы текст не обрезался */
 }
 
 /* Поле ввода количества / длины стены */

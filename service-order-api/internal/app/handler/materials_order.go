@@ -82,23 +82,42 @@ func (h *Handler) GetOrdersAPI(ctx *gin.Context) {
 
 func (h *Handler) GetOrderWithMaterialsAPI(ctx *gin.Context) {
 	idStr := ctx.Param("id")
-	id, err := strconv.Atoi(idStr)
+	orderID, err := strconv.Atoi(idStr)
 	if err != nil {
 		h.errorHandler(ctx, http.StatusBadRequest, err)
 		return
 	}
 
-	// Получаем заказ и материалы
-	order, materials, err := h.Repository.GetOrderByID(id)
+	order, materials, err := h.Repository.GetOrderByID(orderID)
 	if err != nil {
 		h.errorHandler(ctx, http.StatusNotFound, err)
 		return
 	}
 
-	// Конвертация sql.NullTime в *time.Time для DateForm и DateFinish
-	var dateForm *time.Time
-	if !order.DateForm.IsZero() {
-		dateForm = &order.DateForm
+	// Формируем DTO материалов
+	var materialsDTO []ds.MaterialInOrder
+	for _, mmo := range materials {
+		var wl *float64
+		if mmo.WallLength.Valid {
+			wl = &mmo.WallLength.Float64
+		}
+		materialsDTO = append(materialsDTO, ds.MaterialInOrder{
+			ID:          mmo.MaterialID,
+			Title:       mmo.Material.Title,
+			Consumption: mmo.Material.Consumption,
+			Count:       mmo.Material.Count,
+			Image:       mmo.Material.Image,
+			WallLength:  wl,
+		})
+	}
+
+	// DTO заказа
+	var ceilingHeight, wallThickness *float64
+	if order.CeilingHeight.Valid {
+		ceilingHeight = &order.CeilingHeight.Float64
+	}
+	if order.WallThickness.Valid {
+		wallThickness = &order.WallThickness.Float64
 	}
 
 	var dateFinish *time.Time
@@ -106,22 +125,23 @@ func (h *Handler) GetOrderWithMaterialsAPI(ctx *gin.Context) {
 		dateFinish = &order.DateFinish.Time
 	}
 
-	// Формируем ответ
-	orderResp := ds.OrderResponse{
-		ID:         order.ID,
-		Status:     order.RequestStatus,
-		DateCreate: order.DateCreate,
-		DateForm:   dateForm,
-		DateFinish: dateFinish,
+	resp := ds.OrderWithMaterials{
+		ID:            order.ID,
+		CreatorID:     order.CreatorID,
+		Status:        order.RequestStatus,
+		CeilingHeight: ceilingHeight,
+		WallThickness: wallThickness,
+		DateCreate:    order.DateCreate,
+		DateForm:      &order.DateForm,
+		DateFinish:    dateFinish,
+		Materials:     materialsDTO,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status":    "success",
-		"order":     orderResp,
-		"materials": materials,
+		"status": "success",
+		"order":  resp,
 	})
 }
-
 func (h *Handler) UpdateMaterialOrderAPI(ctx *gin.Context) {
 	idStr := ctx.Param("id")
 	id, err := strconv.Atoi(idStr)
