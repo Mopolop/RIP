@@ -309,3 +309,9 @@ body {
 .delete-button:active {
     transform: scale(0.98);
 }
+
+.order-actions {
+    display: flex;           /* делаем flex-контейнер */
+    justify-content: center; /* центрируем по горизонтали */
+    margin-top: 20px;        /* отступ сверху */
+}
