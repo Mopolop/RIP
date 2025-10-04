@@ -48,6 +48,14 @@ body {
     align-items: center;
 }
 
+.parameters-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: flex-start; /* чтобы поля выравнивались слева */
+    margin-left: -30px; /* сдвигаем весь блок левее */
+}
+
 /* Заголовок параметров */
 .parameters-header {
     font-family: 'Inter', sans-serif;
@@ -61,31 +69,33 @@ body {
 /* Строка параметра */
 .parameter-row {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
+    align-items: center;    /* вертикальное выравнивание */
+    justify-content: flex-start;
+    gap: 25px;
+    width: 100%;
 }
 
+/* Надписи фиксированной ширины, чтобы поля были на одном уровне */
 .parameter-label {
     font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: 16px;
     color: #000000;
     text-align: right;
-    white-space: nowrap; /* запрет переносов */
+    white-space: nowrap;
+    width: 120px; /* фиксированная ширина для всех надписей */
 }
-
 
 /* Поля ввода */
 .parameter-input {
-    flex: 1;
-    box-sizing: border-box;
-    height: 24px;
+    width: 250px;      
+    height: 36px;
     padding: 0 10px;
     font-family: 'Inter', sans-serif;
-    font-size: 14px;
+    font-size: 16px;
     border: 1px solid #E3E1D8;
     border-radius: 4px;
+    box-sizing: border-box;
 }
 
 /* Общий контейнер для карточек заказа */
@@ -126,42 +136,71 @@ body {
 /* Контейнер информации */
 .order-materials .card-info {
     display: flex;
-    flex: 1;
-    align-items: center; /* центрируем по вертикали */
-    justify-content: space-between; /* разделяем левую и правую колонку */
+    align-items: stretch; 
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
 }
 
-/* Левая колонка: название и поле ввода */
+/* Колонка с названием */
 .card-info-left {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+
+/* Колонка с расходом и количеством */
+.card-info-middle {
+    flex: 0 1 auto; /* фиксированная ширина */
+    display: flex;
+    align-items: center; /* выравнивание по центру */
+    margin-right: 30px; 
+}
+
+.card-info-left .card-title {
+    font-size: 16px;           /* 📌 увеличили шрифт */
+    line-height: 20px;         /* немного выше строки */
+    color: #000;
+    white-space: normal;       
+    word-wrap: break-word;
+    overflow: hidden;
+
+    /* Ограничение по строкам */
+    line-clamp: 3;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+
+/* Общий блок для поля длины */
+.card-input-block {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-
-    flex: 1 1 auto;   /* разрешаем расширяться и сжиматься */
-    min-width: 0;     /* важно! позволяет тексту переноситься внутри flex */
+    align-items: center; /* чтобы надпись была по центру */
+    margin-bottom: 12px;
+    width: 250px;
 }
 
-/* Название материала */
-.card-info-left .card-title {
-    font-weight: 400;
-    font-size: 28px;
-    color: #000000;
-
-    word-wrap: break-word;   /* перенос длинных слов */
-    overflow-wrap: break-word;
-    white-space: normal;     /* разрешаем переносы */
-    overflow: visible;       /* чтобы текст не обрезался */
+.card-input-label {
+    font-weight: 700;
+    margin-bottom: 6px;
+    font-size: 14px;
+    width: 100%;
 }
 
-/* Поле ввода количества / длины стены */
 .card-input {
-    width: 250px;     /* увеличена ширина */
-    height: 36px;     /* чуть выше */
-    padding: 0 10px;  /* больше внутреннего отступа */
-    font-size: 16px;  /* чуть крупнее шрифт */
+    width: 100%;
+    height: 36px;
+    padding: 0 10px;
+    font-size: 16px;
     border: 1px solid #E3E1D8;
     border-radius: 4px;
     box-sizing: border-box;
+    background-color: #FFFFFF; /* белый фон */
+    color: #000000;
 }
 
 
@@ -169,33 +208,59 @@ body {
 .card-info-right {
     display: flex;
     flex-direction: column;
-    justify-content: center; /* по центру вертикально */
-    gap: 4px;
-    flex: 0 0 120px; /* фиксированная ширина */
-    align-items: flex-start; /* выравнивание текста слева */
+    align-items: flex-start;
+    gap: 8px;
+    flex: 0 0 250px; /* ширина под ввод и результат */
 }
 
 .card-bottom {
     display: flex;
     flex-direction: column;
-    gap: 8px; /* расстояние между расходом и количеством */
+    gap: 4px;
+    white-space: nowrap;
 }
-
 
 /* Расход раствора */
 .card-volume {
     font-weight: 700;
-    font-size: 20px;
-    color: #000000; 
-    white-space: nowrap; /* запрет переносов */
+    font-size: 16px; /* уменьшено, как на главной */
+    color: #000000;
+    white-space: nowrap;
 }
     
 
 /* Количество штук */
 .card-count {
-    font-weight: 400;
-    font-size: 14px;
+    font-weight: 700;
+    font-size: 13px;
     color: #959595;
+}
+
+/* Результат */
+.card-result {
+    display: flex;
+    flex-direction: column;
+    margin-top: 8px;
+    width: 250px;
+}
+
+.card-result-label {
+    font-weight: 700;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+/* Поле результата — только для чтения, другой фон */
+.card-result-output {
+    width: 100%;
+    height: 36px;
+    padding: 0 10px;
+    font-size: 14px;
+    border: 1px solid #E3E1D8;
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: #000000;
+    pointer-events: none; /* полностью исключаем ввод */
 }
 
 /* Контейнер для карточек и счетчика */

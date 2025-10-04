@@ -22,21 +22,23 @@
 <div class="parameters-group">
     <div class="parameters-header">Параметры (м)</div>
 
-   <div class="parameter-row">
-    <div class="parameter-label">Высота потолка</div>
-    <input type="text" class="parameter-input"
-           value="{{if .order.CeilingHeight.Valid}}{{printf "%.2f" .order.CeilingHeight.Float64}}{{end}}">
+    <!-- Внутренний контейнер для сдвига полей -->
+    <div class="parameters-fields">
+        <div class="parameter-row">
+            <div class="parameter-label">Высота потолка</div>
+            <input type="text" class="parameter-input"
+                   value="{{if .order.CeilingHeight.Valid}}{{printf "%.2f" .order.CeilingHeight.Float64}}{{end}}">
+        </div>
+
+        <div class="parameter-row">
+            <div class="parameter-label">Толщина стены</div>
+            <input type="text" class="parameter-input"
+                   value="{{if .order.WallThickness.Valid}}{{printf "%.2f" .order.WallThickness.Float64}}{{end}}">
+        </div>
+    </div>
 </div>
 
-<div class="parameter-row">
-    <div class="parameter-label">Толщина стены</div>
-    <input type="text" class="parameter-input"
-           value="{{if .order.WallThickness.Valid}}{{printf "%.2f" .order.WallThickness.Float64}}{{end}}">
 </div>
-
-</div>
-
-
         <!-- Контейнер для счетчика -->
        <div class="order-header">
        <div class="order-count">
@@ -46,20 +48,46 @@
 
 <div class="order-materials">
     {{range .materials}}
-    <div class="card">
-        <div class="card-image">
-            <img src="{{.Material.Image}}" alt="{{.Material.Title}}">
-        </div>
-        <div class="card-info">
-            <div class="card-title">{{.Material.Title}} {{.Material.Description}}</div>  
-            <div class="card-bottom">   
-                <div class="card-volume">{{.Material.Consumption}} м³ на 1 м³ кладки</div>
-                <div class="card-count">{{.Material.Count}} шт./м³</div>
-            </div>
-        </div>
-        <input type="text" class="card-input" placeholder="Введите длину стены (м)" value="{{if .WallLength.Valid}}
-        {{printf "%.2f" .WallLength.Float64}}{{end}}">
+   <div class="card">
+    <div class="card-image">
+        <img src="{{.Material.Image}}" alt="{{.Material.Title}}">
     </div>
+    <div class="card-info">
+    <!-- Левая часть: только название -->
+    <div class="card-info-left">
+        <div class="card-title">{{.Material.Title}} {{.Material.Description}}</div>
+    </div>
+
+    <!-- Средняя часть: расход и количество -->
+    <div class="card-info-middle">
+        <div class="card-bottom">
+            <div class="card-volume">{{.Material.Consumption}} м³ на 1 м³ кладки</div>
+            <div class="card-count">{{.Material.Count}} шт./м³</div>
+        </div>
+    </div>
+
+    <!-- Правая часть: ввод длины и результат -->
+   <div class="card-info-right">
+    <div class="card-input-block">
+        <div class="card-input-label">Длина стены</div>
+        <input type="text" class="card-input"
+               placeholder="Введите длину стены (м)"
+               value="{{if .WallLength.Valid}}{{printf "%.2f" .WallLength.Float64}}{{end}}">
+    </div>
+
+    <div class="card-result">
+        <div class="card-result-label">Результат</div>
+        <input type="text" class="card-result-output" readonly
+               value="{{if .MaterialsConsumption.Valid}}{{printf "%.2f" .MaterialsConsumption.Float64}}{{end}}">
+    </div>
+</div>
+
+</div>
+
+
+</div>
+
+
     {{end}}
 </div>
 
