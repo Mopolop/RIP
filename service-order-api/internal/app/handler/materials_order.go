@@ -226,3 +226,55 @@ func (h *Handler) FormMaterialOrderAPI(ctx *gin.Context) {
 		"order":  order,
 	})
 }
+
+func (h *Handler) CompleteOrRejectOrderAPI(ctx *gin.Context) {
+	idStr := ctx.Param("id")
+	orderID, err := strconv.Atoi(idStr)
+	if err != nil {
+		h.errorHandler(ctx, http.StatusBadRequest, err)
+		return
+	}
+
+	var req ds.CompleteOrderRequest
+	if err := ctx.BindJSON(&req); err != nil {
+		h.errorHandler(ctx, http.StatusBadRequest, err)
+		return
+	}
+
+	if err := h.Repository.CompleteOrRejectOrder(orderID, req); err != nil {
+		h.errorHandler(ctx, http.StatusInternalServerError, err)
+		return
+	}
+
+	order, materials, err := h.Repository.GetOrderByID(orderID)
+	if err != nil {
+		h.errorHandler(ctx, http.StatusInternalServerError, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"status":    "success",
+		"order":     order,
+		"materials": materials,
+	})
+}
+
+func (h *Handler) DeleteMaterialsOrderAPI(ctx *gin.Context) {
+	idStr := ctx.Param("id")
+	orderID, err := strconv.Atoi(idStr)
+	if err != nil {
+		h.errorHandler(ctx, http.StatusBadRequest, fmt.Errorf("некорректный ID заказа"))
+		return
+	}
+
+	// Проставляем статус "удален" и дату завершения
+	if err := h.Repository.SoftDeleteOrder(orderID); err != nil {
+		h.errorHandler(ctx, http.StatusInternalServerError, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"orderID": orderID,
+	})
+}

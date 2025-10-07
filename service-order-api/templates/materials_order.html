@@ -75,11 +75,14 @@
                value="{{if .WallLength.Valid}}{{printf "%.2f" .WallLength.Float64}}{{end}}">
     </div>
 
-    <div class="card-result">
-        <div class="card-result-label">Результат</div>
-        <input type="text" class="card-result-output" readonly
-               value="{{if .MaterialsConsumption.Valid}}{{printf "%.2f" .MaterialsConsumption.Float64}}{{end}}">
-    </div>
+  <div class="card-result">
+    <div class="card-result-label">Результат</div>
+    <input type="text" class="card-result-output" readonly
+           value="{{if and (gt .MaterialConsumption 0) .MortarConsumption.Valid}}{{.MaterialConsumption}} шт., {{printf "%.2f" .MortarConsumption.Float64}} м³{{end}}">
+</div>
+
+
+
 </div>
 
 </div>

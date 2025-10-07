@@ -10,7 +10,7 @@ type MaterialOrder struct {
 	CeilingHeight sql.NullFloat64 `gorm:"type:NUMERIC(5,2);default:null"`       // высота потолка
 	WallThickness sql.NullFloat64 `gorm:"type:NUMERIC(5,2);default:null"`       // толщина стены
 	CreatorID     int             `gorm:"not null"`                             // ID создателя заказа
-	ModeratorID   int             `gorm:"not null"`                             // ID модератора заказа
+	ModeratorID   *int            `gorm:""`                                     // ID модератора заказа
 	RequestStatus string          `gorm:"type:varchar(50);not null"`            // статус заказа
 	DateCreate    time.Time       `gorm:"not null;autoCreateTime"`              // дата создания
 	DateForm      time.Time       `gorm:"default:null"`                         // дата формирования заявки
@@ -42,4 +42,9 @@ type OrderWithMaterials struct {
 	DateForm      *time.Time        `json:"date_form,omitempty"`
 	DateFinish    *time.Time        `json:"date_finish,omitempty"`
 	Materials     []MaterialInOrder `json:"materials"`
+}
+
+type CompleteOrderRequest struct {
+	Status      string `json:"status" binding:"required,oneof=завершен отклонен"`
+	ModeratorID int    `json:"moderator_id" binding:"required"`
 }

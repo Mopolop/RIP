@@ -2,17 +2,15 @@ package repository
 
 import (
 	"context"
+	"db-integration/internal/app/ds"
+	"errors"
 	"fmt"
+	"github.com/minio/minio-go/v7"
+	"gorm.io/gorm"
 	"mime/multipart"
 	"path/filepath"
 	"strings"
 	"unicode"
-
-	"db-integration/internal/app/ds"
-	"errors"
-
-	"github.com/minio/minio-go/v7"
-	"gorm.io/gorm"
 )
 
 func (r *Repository) GetMaterials() ([]ds.Material, error) {
@@ -50,12 +48,14 @@ func (r *Repository) GetDraftOrder(userID int) (*ds.MaterialOrder, error) {
 func (r *Repository) CreateDraftOrder(userID int) (*ds.MaterialOrder, error) {
 	order := ds.MaterialOrder{
 		CreatorID:     userID,
-		ModeratorID:   userID, // можно назначить себя модератором, либо 0/NULL
 		RequestStatus: "черновик",
+		ModeratorID:   nil, // черновик создаётся без модератора
 	}
+
 	if err := r.db.Create(&order).Error; err != nil {
 		return nil, err
 	}
+
 	return &order, nil
 }
 

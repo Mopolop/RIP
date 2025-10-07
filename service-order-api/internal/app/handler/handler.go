@@ -28,6 +28,7 @@ func (h *Handler) RegisterHandler(router *gin.Engine) {
 	router.GET("/api/orders/draft/cart", h.GetDraftCartAPI)
 	router.GET("/api/orders", h.GetOrdersAPI)
 	router.GET("/api/orders/:id", h.GetOrderWithMaterialsAPI)
+	router.GET("/api/users/:id", h.GetUserAPI)
 
 	router.POST("/orders/draft/add/:id", h.AddMaterialToDraftOrder)
 	router.POST("/orders/delete/:id", h.DeleteMaterialsOrder)
@@ -35,10 +36,19 @@ func (h *Handler) RegisterHandler(router *gin.Engine) {
 	router.POST("/api/orders/draft/add/:id", h.AddMaterialToDraftOrderAPI)
 	router.POST("/api/material/:id/image", h.UploadMaterialImage)
 	router.POST("/api/material/:id/delete", h.DeleteMaterialLogicalAPI)
+	router.POST("/api/orders/delete/:id", h.DeleteMaterialsOrderAPI)
+	router.POST("/api/users/register", h.RegisterUserAPI)
+	router.POST("/api/users/login", h.LoginUserAPI)
+	router.POST("/api/users/logout", h.LogoutUserAPI)
 
 	router.PUT("/api/material/:id", h.UpdateMaterialAPI)
 	router.PUT("/api/orders/:id", h.UpdateMaterialOrderAPI)
 	router.PUT("/api/orders/:id/form", h.FormMaterialOrderAPI)
+	router.PUT("/api/orders/:id/complete", h.CompleteOrRejectOrderAPI)
+	router.PUT("/api/orders/materials/:order_id/:material_id/wall_length", h.UpdateWallLengthAPI)
+	router.PUT("/api/users/:id", h.UpdateUserAPI)
+
+	router.DELETE("/api/orders/:order_id/material/:material_id", h.DeleteMaterialFromOrderAPI)
 
 }
 

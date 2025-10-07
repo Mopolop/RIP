@@ -1,8 +1,11 @@
 package repository
 
 import (
+	"database/sql"
 	"db-integration/internal/app/ds"
 	"fmt"
+	"math"
+	"strings"
 	"time"
 )
 
@@ -33,12 +36,15 @@ func (r *Repository) GetOrdersFiltered(status, start, end string) ([]ds.OrderRes
 		        u1.login as moderator, 
 		        u2.login as creator`).
 		Joins("LEFT JOIN users u1 ON u1.id = mo.moderator_id").
-		Joins("LEFT JOIN users u2 ON u2.id = mo.creator_id").
-		Where("mo.request_status NOT IN ?", []string{"удален", "черновик"})
+		Joins("LEFT JOIN users u2 ON u2.id = mo.creator_id")
 
 	// фильтр по статусу
 	if status != "" {
-		query = query.Where("mo.request_status = ?", status)
+		statuses := []string{}
+		for _, s := range strings.Split(status, ",") {
+			statuses = append(statuses, strings.TrimSpace(s))
+		}
+		query = query.Where("mo.request_status IN ?", statuses)
 	}
 
 	// фильтр по диапазону дат
@@ -97,4 +103,58 @@ func (r *Repository) FormMaterialOrder(orderID int) error {
 	}
 
 	return nil
+}
+
+func (r *Repository) CompleteOrRejectOrder(orderID int, req ds.CompleteOrderRequest) error {
+	var order ds.MaterialOrder
+	if err := r.db.First(&order, orderID).Error; err != nil {
+		return fmt.Errorf("заказ с ID=%d не найден", orderID)
+	}
+
+	// Обновляем статус, модератора и дату завершения
+	updates := map[string]interface{}{
+		"request_status": req.Status,
+		"moderator_id":   req.ModeratorID,
+		"date_finish":    time.Now(),
+	}
+
+	if err := r.db.Model(&ds.MaterialOrder{}).Where("id = ?", orderID).Updates(updates).Error; err != nil {
+		return fmt.Errorf("не удалось обновить заказ: %w", err)
+	}
+
+	// Рассчитываем расход материалов и раствора
+	var mmos []ds.MaterialMaterialOrder
+	if err := r.db.Preload("Material").Where("material_order_id = ?", orderID).Find(&mmos).Error; err != nil {
+		return err
+	}
+
+	for _, mmo := range mmos {
+		if mmo.WallLength.Valid && order.CeilingHeight.Valid && order.WallThickness.Valid {
+			wallVolume := mmo.WallLength.Float64 * order.CeilingHeight.Float64 * order.WallThickness.Float64
+
+			// Расход материала (шт.), округляем вверх
+			mmo.MaterialConsumption = int(math.Ceil(wallVolume * float64(mmo.Material.Count)))
+
+			// Расход раствора (м³)
+			mmo.MortarConsumption = sql.NullFloat64{
+				Float64: wallVolume * mmo.Material.Consumption,
+				Valid:   true,
+			}
+
+			if err := r.db.Save(&mmo).Error; err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (r *Repository) SoftDeleteOrder(orderID int) error {
+	updates := map[string]interface{}{
+		"request_status": "удален",
+		"date_form":      time.Now(), // дата завершения
+	}
+
+	return r.db.Model(&ds.MaterialOrder{}).Where("id = ?", orderID).Updates(updates).Error
 }
