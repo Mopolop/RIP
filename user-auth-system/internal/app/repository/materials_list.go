@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"db-integration/internal/app/ds"
 	"errors"
 	"fmt"
 	"github.com/minio/minio-go/v7"
@@ -11,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 	"unicode"
+	"user-auth-system/internal/app/ds"
 )
 
 func (r *Repository) GetMaterials() ([]ds.Material, error) {

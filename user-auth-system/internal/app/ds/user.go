@@ -1,9 +1,22 @@
 package ds
 
-// User представляет пользователя системы
+import (
+	"user-auth-system/internal/app/role"
+)
+
 type User struct {
-	ID          uint   `gorm:"primaryKey;autoIncrement" json:"id"`                 // уникальный идентификатор пользователя
-	Login       string `gorm:"varchar(25);unique;not null" json:"login"`           // логин пользователя (уникальный, not null)
-	Password    string `gorm:"varchar(100);not null" json:"-"`                     // пароль (не возвращается в JSON, not null)
-	IsModerator bool   `gorm:"boolean;not null;default:false" json:"is_moderator"` // признак модератора (not null, по умолчанию false)
+	ID       int       `gorm:"primaryKey;autoIncrement"` // обязательный PK для GORM
+	Login    string    `gorm:"unique;not null"`
+	Role     role.Role `gorm:"type:int"` // хранить enum как int
+	Password string
+}
+
+type RegisterReq struct {
+	Login    string `json:"login"`
+	Password string `json:"password"`
+}
+
+// Структура ответа
+type RegisterResp struct {
+	Ok bool `json:"ok"`
 }

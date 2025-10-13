@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"db-integration/internal/app/ds"
+	"user-auth-system/internal/app/ds"
 )
 
 func (r *Repository) DeleteMaterialFromOrder(materialID, orderID int) error {

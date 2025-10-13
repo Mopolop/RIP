@@ -1,0 +1,43 @@
+package redis
+
+import (
+	"context"
+	"fmt"
+	"github.com/go-redis/redis/v8"
+	"strconv"
+	cfg "user-auth-system/internal/app/config"
+)
+
+const servicePrefix = "user_auth_service."
+
+type Client struct {
+	cfg    cfg.RedisConfig
+	client *redis.Client
+}
+
+func New(ctx context.Context, cfgIn cfg.RedisConfig) (*Client, error) {
+	client := &Client{}
+
+	client.cfg = cfgIn
+
+	redisClient := redis.NewClient(&redis.Options{
+		Password:    cfgIn.Password,
+		Username:    cfgIn.User,
+		Addr:        cfgIn.Host + ":" + strconv.Itoa(cfgIn.Port),
+		DB:          0,
+		DialTimeout: cfgIn.DialTimeout,
+		ReadTimeout: cfgIn.ReadTimeout,
+	})
+
+	client.client = redisClient
+
+	if _, err := redisClient.Ping(ctx).Result(); err != nil {
+		return nil, fmt.Errorf("cant ping redis: %w", err)
+	}
+
+	return client, nil
+}
+
+func (c *Client) Close() error {
+	return c.client.Close()
+}

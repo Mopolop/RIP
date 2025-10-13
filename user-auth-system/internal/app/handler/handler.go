@@ -1,8 +1,11 @@
 package handler
 
 import (
-	"db-integration/internal/app/repository"
 	"html/template"
+	"user-auth-system/internal/app/config"
+	redisclient "user-auth-system/internal/app/redis"
+	"user-auth-system/internal/app/repository"
+	"user-auth-system/internal/app/role"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -10,46 +13,74 @@ import (
 
 type Handler struct {
 	Repository *repository.Repository
+	Config     *config.Config
+	Redis      *redisclient.Client
 }
 
-func NewHandler(r *repository.Repository) *Handler {
+func NewHandler(r *repository.Repository, cfg *config.Config, redis *redisclient.Client) *Handler {
 	return &Handler{
 		Repository: r,
+		Config:     cfg,
+		Redis:      redis,
 	}
 }
 
 // RegisterHandler регистрируем маршруты
 func (h *Handler) RegisterHandler(router *gin.Engine) {
+	// ---------------------------
+	// Публичные маршруты
+	// ---------------------------
 	router.GET("/", h.GetMaterials)
 	router.GET("/detailed_material/:id", h.GetMaterial)
 	router.GET("/materials_order/:id", h.GetMaterialsOrder)
 	router.GET("/api/material/:id", h.GetMaterialAPI)
 	router.GET("/api/materials", h.GetMaterialsAPI)
-	router.GET("/api/orders/draft/cart", h.GetDraftCartAPI)
-	router.GET("/api/orders", h.GetOrdersAPI)
-	router.GET("/api/orders/:id", h.GetOrderWithMaterialsAPI)
-	router.GET("/api/users/:id", h.GetUserAPI)
 
-	router.POST("/orders/draft/add/:id", h.AddMaterialToDraftOrder)
-	router.POST("/orders/delete/:id", h.DeleteMaterialsOrder)
-	router.POST("/api/material", h.CreateMaterialAPI)
-	router.POST("/api/orders/draft/add/:id", h.AddMaterialToDraftOrderAPI)
-	router.POST("/api/material/:id/image", h.UploadMaterialImage)
-	router.POST("/api/material/:id/delete", h.DeleteMaterialLogicalAPI)
-	router.POST("/api/orders/delete/:id", h.DeleteMaterialsOrderAPI)
-	router.POST("/api/users/register", h.RegisterUserAPI)
 	router.POST("/api/users/login", h.LoginUserAPI)
 	router.POST("/api/users/logout", h.LogoutUserAPI)
+	router.POST("/sign_up", h.Register)
 
-	router.PUT("/api/material/:id", h.UpdateMaterialAPI)
-	router.PUT("/api/orders/:id", h.UpdateMaterialOrderAPI)
-	router.PUT("/api/orders/:id/form", h.FormMaterialOrderAPI)
-	router.PUT("/api/orders/:id/complete", h.CompleteOrRejectOrderAPI)
-	router.PUT("/api/orders/materials/:order_id/:material_id/wall_length", h.UpdateWallLengthAPI)
-	router.PUT("/api/users/:id", h.UpdateUserAPI)
+	// ---------------------------
+	// Защищённые маршруты
+	// ---------------------------
 
-	router.DELETE("/api/orders/:order_id/material/:material_id", h.DeleteMaterialFromOrderAPI)
+	// Все авторизованные пользователи (User и Admin)
+	auth := router.Group("/api")
+	auth.Use(h.WithAuthCheck(role.User, role.Admin))
+	{
+		// Пользователи
+		auth.GET("/users/:id", h.GetUserAPI)
+		auth.PUT("/users/:id", h.UpdateUserAPI)
 
+		// Материалы
+		auth.POST("/material", h.CreateMaterialAPI)                   // только Admin можно, если нужно — выделить отдельно
+		auth.PUT("/material/:id", h.UpdateMaterialAPI)                // Admin
+		auth.POST("/material/:id/image", h.UploadMaterialImage)       // Admin
+		auth.POST("/material/:id/delete", h.DeleteMaterialLogicalAPI) // Admin
+		auth.GET("/materials_order/:id", h.GetMaterialsOrder)
+		auth.POST("/orders/draft/add/:id", h.AddMaterialToDraftOrderAPI)
+
+		// Заказы
+		auth.GET("/orders", h.GetOrdersAPI)
+		auth.GET("/orders/:id", h.GetOrderWithMaterialsAPI)
+		auth.GET("/orders/draft/cart", h.GetDraftCartAPI)
+		auth.PUT("/orders/:id", h.UpdateMaterialOrderAPI)
+		auth.PUT("/orders/:id/form", h.FormMaterialOrderAPI)
+		auth.PUT("/orders/:id/complete", h.CompleteOrRejectOrderAPI)
+		auth.PUT("/orders/materials/:order_id/:material_id/wall_length", h.UpdateWallLengthAPI)
+		auth.POST("/orders/delete/:id", h.DeleteMaterialsOrderAPI)
+		auth.DELETE("/orders/:order_id/material/:material_id", h.DeleteMaterialFromOrderAPI)
+	}
+
+	// Если нужно отдельное ограничение только для Admin, можно сделать другой group:
+	admin := router.Group("/api/admin")
+	admin.Use(h.WithAuthCheck(role.Admin))
+	{
+		admin.POST("/material", h.CreateMaterialAPI)
+		admin.PUT("/material/:id", h.UpdateMaterialAPI)
+		admin.POST("/material/:id/image", h.UploadMaterialImage)
+		admin.POST("/material/:id/delete", h.DeleteMaterialLogicalAPI)
+	}
 }
 
 // RegisterStatic регистрирует статические файлы и шаблоны

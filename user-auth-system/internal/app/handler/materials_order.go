@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"db-integration/internal/app/ds"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 	"time"
+	"user-auth-system/internal/app/ds"
 )
 
 // POST /orders/delete/:id - пометить заказ как удалённый
@@ -121,8 +121,8 @@ func (h *Handler) GetOrderWithMaterialsAPI(ctx *gin.Context) {
 	}
 
 	var dateFinish *time.Time
-	if order.DateFinish.Valid {
-		dateFinish = &order.DateFinish.Time
+	if order.DateFinish != nil {
+		dateFinish = order.DateFinish
 	}
 
 	resp := ds.OrderWithMaterials{
@@ -132,7 +132,7 @@ func (h *Handler) GetOrderWithMaterialsAPI(ctx *gin.Context) {
 		CeilingHeight: ceilingHeight,
 		WallThickness: wallThickness,
 		DateCreate:    order.DateCreate,
-		DateForm:      &order.DateForm,
+		DateForm:      order.DateForm,
 		DateFinish:    dateFinish,
 		Materials:     materialsDTO,
 	}

@@ -2,11 +2,11 @@ package repository
 
 import (
 	"database/sql"
-	"db-integration/internal/app/ds"
 	"fmt"
 	"math"
 	"strings"
 	"time"
+	"user-auth-system/internal/app/ds"
 )
 
 func (r *Repository) GetOrderByID(id int) (ds.MaterialOrder, []ds.MaterialMaterialOrder, error) {

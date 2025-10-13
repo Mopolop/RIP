@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"db-integration/internal/app/ds"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"strconv"
+	"user-auth-system/internal/app/ds"
 )
 
 func (h *Handler) GetMaterials(ctx *gin.Context) {

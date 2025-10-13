@@ -58,7 +58,7 @@ services:
   
   postgres:
     image: postgres:latest
-    container_name: postgres
+    container_name: postgres-1
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
@@ -68,12 +68,24 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  redis:
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning --requirepass password
+    volumes:
+      - redisdata:/data
+
+  
   adminer:
     image: adminer:latest
     ports:
       - "8081:8080"
     depends_on:
       - postgres
+
+      
 
 volumes:
   data1-1:
@@ -85,3 +97,4 @@ volumes:
   data4-1:
   data4-2:
   postgres_data:
+  redisdata:

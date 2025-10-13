@@ -3,8 +3,8 @@ package pkg
 import (
 	"fmt"
 
-	"db-integration/internal/app/config"
-	"db-integration/internal/app/handler"
+	"user-auth-system/internal/app/config"
+	"user-auth-system/internal/app/handler"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )

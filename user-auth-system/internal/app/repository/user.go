@@ -1,8 +1,9 @@
 package repository
 
 import (
-	"db-integration/internal/app/ds"
 	"errors"
+	"user-auth-system/internal/app/ds"
+
 	"gorm.io/gorm"
 )
 
@@ -45,4 +46,8 @@ func (r *Repository) UpdateUser(userID int, updates map[string]interface{}) erro
 		return err
 	}
 	return nil
+}
+
+func (r *Repository) Register(user *ds.User) error {
+	return r.db.Create(user).Error
 }

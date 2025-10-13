@@ -6,17 +6,19 @@ import (
 )
 
 type MaterialOrder struct {
-	ID            int             `gorm:"primaryKey;autoIncrement"`             // первичный ключ
-	CeilingHeight sql.NullFloat64 `gorm:"type:NUMERIC(5,2);default:null"`       // высота потолка
-	WallThickness sql.NullFloat64 `gorm:"type:NUMERIC(5,2);default:null"`       // толщина стены
-	CreatorID     int             `gorm:"not null"`                             // ID создателя заказа
-	ModeratorID   *int            `gorm:""`                                     // ID модератора заказа
-	RequestStatus string          `gorm:"type:varchar(50);not null"`            // статус заказа
-	DateCreate    time.Time       `gorm:"not null;autoCreateTime"`              // дата создания
-	DateForm      time.Time       `gorm:"default:null"`                         // дата формирования заявки
-	DateFinish    sql.NullTime    `gorm:"default:null"`                         // дата завершения (может быть null)
-	Creator       User            `gorm:"foreignKey:CreatorID;references:ID"`   // связь с пользователем-автором
-	Moderator     User            `gorm:"foreignKey:ModeratorID;references:ID"` // связь с пользователем-модератором
+	ID            int             `gorm:"primaryKey;autoIncrement"`       // первичный ключ
+	CeilingHeight sql.NullFloat64 `gorm:"type:NUMERIC(5,2);default:null"` // высота потолка
+	WallThickness sql.NullFloat64 `gorm:"type:NUMERIC(5,2);default:null"` // толщина стены
+	CreatorID     int             `gorm:"not null"`                       // ID создателя заказа
+	ModeratorID   *int            `gorm:""`                               // ID модератора заказа (nullable)
+	RequestStatus string          `gorm:"type:varchar(50);not null"`      // статус заказа
+	DateCreate    time.Time       `gorm:"not null;autoCreateTime"`        // дата создания
+	DateForm      *time.Time      `gorm:"default:null"`                   // дата формирования заявки
+	DateFinish    *time.Time      `gorm:"default:null"`                   // дата завершения (может быть null)
+
+	// Связи с пользователями
+	Creator   *User `gorm:"foreignKey:CreatorID;references:ID"`   // автор заказа (обязательно)
+	Moderator *User `gorm:"foreignKey:ModeratorID;references:ID"` // модератор (nullable)
 }
 
 type OrderResponse struct {

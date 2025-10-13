@@ -1,69 +1,43 @@
 package handler
 
 import (
-	"db-integration/internal/app/ds"
+	"crypto/sha1"
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+	"user-auth-system/internal/app/ds"
+	"user-auth-system/internal/app/role"
+
+	"github.com/gin-gonic/gin"
 )
 
-func (h *Handler) RegisterUserAPI(ctx *gin.Context) {
-	var req struct {
-		Login    string `json:"login"`
-		Password string `json:"password"`
-	}
+func (h *Handler) Register(ctx *gin.Context) {
+	req := &ds.RegisterReq{}
 
-	if err := ctx.BindJSON(&req); err != nil {
-		h.errorHandler(ctx, http.StatusBadRequest, fmt.Errorf("некорректное тело запроса"))
+	if err := json.NewDecoder(ctx.Request.Body).Decode(req); err != nil {
+		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
-	user := ds.User{
+	if req.Login == "" || req.Password == "" {
+		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("login or password is empty"))
+		return
+	}
+
+	user := &ds.User{
 		Login:    req.Login,
-		Password: req.Password,
+		Password: generateHashString(req.Password),
+		Role:     role.User, // по умолчанию создаём пользователя с ролью User
 	}
 
-	if err := h.Repository.CreateUser(&user); err != nil {
-		h.errorHandler(ctx, http.StatusInternalServerError, err)
+	if err := h.Repository.Register(user); err != nil {
+		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, gin.H{
-		"status": "success",
-		"user": gin.H{
-			"id":           user.ID,
-			"login":        user.Login,
-			"is_moderator": user.IsModerator,
-		},
-	})
-}
-
-func (h *Handler) LoginUserAPI(ctx *gin.Context) {
-	var req struct {
-		Login    string `json:"login"`
-		Password string `json:"password"`
-	}
-
-	if err := ctx.BindJSON(&req); err != nil {
-		h.errorHandler(ctx, http.StatusBadRequest, fmt.Errorf("некорректное тело запроса"))
-		return
-	}
-
-	user, err := h.Repository.GetUserByLogin(req.Login)
-	if err != nil || user.Password != req.Password {
-		h.errorHandler(ctx, http.StatusUnauthorized, fmt.Errorf("неверный логин или пароль"))
-		return
-	}
-
-	ctx.JSON(http.StatusOK, gin.H{
-		"status": "success",
-		"user": gin.H{
-			"id":           user.ID,
-			"login":        user.Login,
-			"is_moderator": user.IsModerator,
-		},
-	})
+	ctx.JSON(http.StatusOK, &ds.RegisterResp{Ok: true})
 }
 
 func (h *Handler) GetUserAPI(ctx *gin.Context) {
@@ -81,9 +55,9 @@ func (h *Handler) GetUserAPI(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"id":           user.ID,
-		"login":        user.Login,
-		"is_moderator": user.IsModerator,
+		"id":    user.ID,
+		"login": user.Login,
+		"role":  user.Role, // можно вернуть числовое значение роли или строковое через конвертер
 	})
 }
 
@@ -121,6 +95,9 @@ func (h *Handler) UpdateUserAPI(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
-func (h *Handler) LogoutUserAPI(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+// Функция для хеширования пароля
+func generateHashString(s string) string {
+	h := sha1.New()
+	h.Write([]byte(s))
+	return hex.EncodeToString(h.Sum(nil))
 }

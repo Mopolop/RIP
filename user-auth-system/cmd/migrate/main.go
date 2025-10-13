@@ -1,11 +1,11 @@
 package main
 
 import (
-	"db-integration/internal/app/ds"
-	"db-integration/internal/app/dsn"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"user-auth-system/internal/app/ds"
+	"user-auth-system/internal/app/dsn"
 )
 
 func main() {
@@ -25,4 +25,5 @@ func main() {
 	if err != nil {
 		panic("cant migrate db")
 	}
+
 }

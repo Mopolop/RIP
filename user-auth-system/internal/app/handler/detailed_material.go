@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"db-integration/internal/app/ds"
 	"github.com/gin-gonic/gin"
+	"user-auth-system/internal/app/ds"
 )
 
 // Получение конкретного материала по ID

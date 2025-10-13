@@ -1,6 +1,6 @@
 package repository
 
-import "db-integration/internal/app/ds"
+import "user-auth-system/internal/app/ds"
 
 func (r *Repository) GetMaterial(id int) (ds.Material, error) {
 	var material ds.Material
