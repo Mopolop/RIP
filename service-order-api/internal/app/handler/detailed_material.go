@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"db-integration/internal/app/ds"
 	"github.com/gin-gonic/gin"
+	"service-order-api/internal/app/ds"
 )
 
 // Получение конкретного материала по ID

@@ -3,10 +3,10 @@ package pkg
 import (
 	"fmt"
 
-	"db-integration/internal/app/config"
-	"db-integration/internal/app/handler"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"service-order-api/internal/app/config"
+	"service-order-api/internal/app/handler"
 )
 
 type Application struct {

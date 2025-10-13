@@ -1,10 +1,10 @@
 package handler
 
 import (
-	"db-integration/internal/app/ds"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"service-order-api/internal/app/ds"
 	"strconv"
 )
 

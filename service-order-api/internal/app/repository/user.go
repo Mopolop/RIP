@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"db-integration/internal/app/ds"
 	"errors"
 	"gorm.io/gorm"
+	"service-order-api/internal/app/ds"
 )
 
 // CreateUser создает нового пользователя

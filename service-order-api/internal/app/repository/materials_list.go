@@ -2,13 +2,13 @@ package repository
 
 import (
 	"context"
-	"db-integration/internal/app/ds"
 	"errors"
 	"fmt"
 	"github.com/minio/minio-go/v7"
 	"gorm.io/gorm"
 	"mime/multipart"
 	"path/filepath"
+	"service-order-api/internal/app/ds"
 	"strings"
 	"unicode"
 )

@@ -1,14 +1,14 @@
 package main
 
 import (
-	"db-integration/internal/app/config"
-	"db-integration/internal/app/dsn"
-	"db-integration/internal/app/handler"
-	"db-integration/internal/app/repository"
-	"db-integration/internal/pkg"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"service-order-api/internal/app/config"
+	"service-order-api/internal/app/dsn"
+	"service-order-api/internal/app/handler"
+	"service-order-api/internal/app/repository"
+	"service-order-api/internal/pkg"
 )
 
 func main() {

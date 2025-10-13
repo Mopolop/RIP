@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"db-integration/internal/app/repository"
 	"html/template"
+	"service-order-api/internal/app/repository"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"

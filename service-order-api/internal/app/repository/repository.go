@@ -1,11 +1,11 @@
 package repository
 
 import (
-	"db-integration/internal/app/ds"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"service-order-api/internal/app/ds"
 )
 
 type Repository struct {

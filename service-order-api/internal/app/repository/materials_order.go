@@ -2,9 +2,9 @@ package repository
 
 import (
 	"database/sql"
-	"db-integration/internal/app/ds"
 	"fmt"
 	"math"
+	"service-order-api/internal/app/ds"
 	"strings"
 	"time"
 )

@@ -1,6 +1,6 @@
 package repository
 
-import "db-integration/internal/app/ds"
+import "service-order-api/internal/app/ds"
 
 func (r *Repository) GetMaterial(id int) (ds.Material, error) {
 	var material ds.Material

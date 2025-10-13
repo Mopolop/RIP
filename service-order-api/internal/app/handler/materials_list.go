@@ -1,10 +1,10 @@
 package handler
 
 import (
-	"db-integration/internal/app/ds"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
+	"service-order-api/internal/app/ds"
 	"strconv"
 )
 
