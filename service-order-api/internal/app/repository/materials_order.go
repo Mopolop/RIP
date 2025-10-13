@@ -122,7 +122,12 @@ func (r *Repository) CompleteOrRejectOrder(orderID int, req ds.CompleteOrderRequ
 		return fmt.Errorf("не удалось обновить заказ: %w", err)
 	}
 
-	// Рассчитываем расход материалов и раствора
+	// Если заказ отклонён — прекращаем выполнение, не считаем расход
+	if req.Status == "отклонен" {
+		return nil
+	}
+
+	// Рассчитываем расход материалов и раствора (только если заказ завершён)
 	var mmos []ds.MaterialMaterialOrder
 	if err := r.db.Preload("Material").Where("material_order_id = ?", orderID).Find(&mmos).Error; err != nil {
 		return err
