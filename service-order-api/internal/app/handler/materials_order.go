@@ -64,12 +64,22 @@ func (h *Handler) GetDraftCartAPI(ctx *gin.Context) {
 }
 
 func (h *Handler) GetOrdersAPI(ctx *gin.Context) {
-	status := ctx.Query("status")
-	start := ctx.Query("start") // формат YYYY-MM-DD
+	start := ctx.Query("start")
 	end := ctx.Query("end")
 
-	orders, err := h.Repository.GetOrdersFiltered(status, start, end)
+	fixedStatuses := ctx.Query("status")
+	if fixedStatuses == "" {
+		fixedStatuses = "завершен,отклонен,отменен"
+	}
+
+	orders, err := h.Repository.GetOrdersFiltered(fixedStatuses, start, end)
 	if err != nil {
+		if err.Error() == "not_found" {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"error": "заказы со статусом 'черновик' или 'удален' не доступны",
+			})
+			return
+		}
 		h.errorHandler(ctx, http.StatusInternalServerError, err)
 		return
 	}

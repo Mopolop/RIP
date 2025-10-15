@@ -42,7 +42,12 @@ func (r *Repository) GetOrdersFiltered(status, start, end string) ([]ds.OrderRes
 	if status != "" {
 		statuses := []string{}
 		for _, s := range strings.Split(status, ",") {
-			statuses = append(statuses, strings.TrimSpace(s))
+			s = strings.TrimSpace(s)
+			// Проверяем, что не пытаются фильтровать по черновику или удалённому
+			if s == "черновик" || s == "удален" {
+				return nil, fmt.Errorf("not_found")
+			}
+			statuses = append(statuses, s)
 		}
 		query = query.Where("mo.request_status IN ?", statuses)
 	}
@@ -51,6 +56,9 @@ func (r *Repository) GetOrdersFiltered(status, start, end string) ([]ds.OrderRes
 	if start != "" && end != "" {
 		query = query.Where("mo.date_create BETWEEN ? AND ?", start, end)
 	}
+
+	// исключаем черновик и удалённые
+	query = query.Where("mo.request_status NOT IN ?", []string{"черновик", "удален"})
 
 	if err := query.Scan(&orders).Error; err != nil {
 		return nil, fmt.Errorf("ошибка при получении заказов: %w", err)
