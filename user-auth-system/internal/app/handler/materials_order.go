@@ -63,6 +63,19 @@ func (h *Handler) GetDraftCartAPI(ctx *gin.Context) {
 	})
 }
 
+// GetOrdersAPI godoc
+// @Summary      Получить список заказов
+// @Description  Возвращает список заказов с возможностью фильтрации по статусу и диапазону дат. Разрешённые статусы: "сформирован", "завершен", "отклонен".
+// @Tags         orders
+// @Accept       json
+// @Produce      json
+// @Param        status  query     string  false  "Статус заказа (сформирован, завершен, отклонен), можно указать несколько через запятую"
+// @Param        start   query     string  false  "Дата начала фильтрации (формат YYYY-MM-DD)"
+// @Param        end     query     string  false  "Дата окончания фильтрации (формат YYYY-MM-DD)"
+// @Success      200     {object}  ds.OrdersListResponse  "Успешный ответ со списком заказов"
+// @Failure      500     {object}  ds.ErrorResponse       "Ошибка на сервере"
+// @Security BearerAuth
+// @Router       /api/orders [get]
 func (h *Handler) GetOrdersAPI(ctx *gin.Context) {
 	status := ctx.Query("status")
 	start := ctx.Query("start") // формат YYYY-MM-DD
@@ -142,6 +155,7 @@ func (h *Handler) GetOrderWithMaterialsAPI(ctx *gin.Context) {
 		"order":  resp,
 	})
 }
+
 func (h *Handler) UpdateMaterialOrderAPI(ctx *gin.Context) {
 	idStr := ctx.Param("id")
 	id, err := strconv.Atoi(idStr)

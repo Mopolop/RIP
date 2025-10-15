@@ -29,6 +29,11 @@ type OrderResponse struct {
 	DateFinish *time.Time `json:"date_finish,omitempty"`
 }
 
+type OrdersListResponse struct {
+	Status string          `json:"status" example:"success"`
+	Orders []OrderResponse `json:"orders"`
+}
+
 type UpdateOrderRequest struct {
 	CeilingHeight *float64 `json:"ceiling_height,omitempty"`
 	WallThickness *float64 `json:"wall_thickness,omitempty"`

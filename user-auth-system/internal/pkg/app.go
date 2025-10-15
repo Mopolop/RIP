@@ -2,13 +2,25 @@ package pkg
 
 import (
 	"fmt"
-
-	"user-auth-system/internal/app/config"
-	"user-auth-system/internal/app/handler"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	_ "user-auth-system/docs"
+	"user-auth-system/internal/app/config"
+	"user-auth-system/internal/app/handler"
 )
 
+// @title Material Consumption Service API
+// @version 1.0
+// @description API сервиса аутентификации с Redis и JWT. Поддерживает роли пользователей и администраторов.
+// @host localhost:8080
+// @BasePath /
+// @schemes http
+//
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 type Application struct {
 	Config  *config.Config
 	Router  *gin.Engine
@@ -25,6 +37,7 @@ func NewApp(c *config.Config, r *gin.Engine, h *handler.Handler) *Application {
 
 func (a *Application) RunApp() {
 	logrus.Info("Server start up")
+	a.Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	a.Handler.RegisterHandler(a.Router)
 	a.Handler.RegisterStatic(a.Router)

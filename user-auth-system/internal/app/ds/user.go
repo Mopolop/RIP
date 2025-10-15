@@ -12,11 +12,13 @@ type User struct {
 }
 
 type RegisterReq struct {
-	Login    string `json:"login"`
-	Password string `json:"password"`
+	Login    string    `json:"login"`
+	Password string    `json:"password"`
+	Role     role.Role `json:"role,omitempty"` // опционально
 }
 
 // Структура ответа
 type RegisterResp struct {
-	Ok bool `json:"ok"`
+	Ok   bool      `json:"ok"`
+	Role role.Role `json:"role,omitempty"` // добавляем поле роли
 }

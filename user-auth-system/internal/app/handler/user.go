@@ -13,6 +13,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Register godoc
+// @Summary      Регистрация нового пользователя
+// @Description  Регистрирует нового пользователя с логином, паролем и (опционально) ролью.
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        request  body      ds.RegisterReq  true  "Данные нового пользователя"
+// @Success      200      {object}  ds.RegisterResp  "Пользователь успешно зарегистрирован"
+// @Failure      400      {object}  map[string]string  "Некорректные данные или пустые поля"
+// @Failure      500      {object}  map[string]string  "Ошибка при сохранении пользователя"
+// @Router       /sign_up [post]
 func (h *Handler) Register(ctx *gin.Context) {
 	req := &ds.RegisterReq{}
 
@@ -26,10 +37,13 @@ func (h *Handler) Register(ctx *gin.Context) {
 		return
 	}
 
+	// Всегда ставим роль User (1)
+	userRole := role.User
+
 	user := &ds.User{
 		Login:    req.Login,
 		Password: generateHashString(req.Password),
-		Role:     role.User, // по умолчанию создаём пользователя с ролью User
+		Role:     userRole,
 	}
 
 	if err := h.Repository.Register(user); err != nil {
@@ -37,7 +51,10 @@ func (h *Handler) Register(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, &ds.RegisterResp{Ok: true})
+	ctx.JSON(http.StatusOK, &ds.RegisterResp{
+		Ok:   true,
+		Role: user.Role,
+	})
 }
 
 func (h *Handler) GetUserAPI(ctx *gin.Context) {

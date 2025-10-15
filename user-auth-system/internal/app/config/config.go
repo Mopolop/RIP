@@ -98,10 +98,8 @@ func NewConfig() (*Config, error) {
 	}
 
 	cfg.JWT = JWTConfig{
-		AccessSecret:    os.Getenv("JWT_ACCESS_SECRET"),
-		RefreshSecret:   os.Getenv("JWT_REFRESH_SECRET"),
-		AccessTokenTTL:  15 * time.Minute,
-		RefreshTokenTTL: 7 * 24 * time.Hour,
+		AccessSecret:   os.Getenv("JWT_ACCESS_SECRET"),
+		AccessTokenTTL: 15 * time.Minute,
 	}
 
 	cfg.Redis = RedisConfig{

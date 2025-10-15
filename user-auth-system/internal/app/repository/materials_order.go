@@ -26,6 +26,13 @@ func (r *Repository) GetOrderByID(id int) (ds.MaterialOrder, []ds.MaterialMateri
 func (r *Repository) GetOrdersFiltered(status, start, end string) ([]ds.OrderResponse, error) {
 	var orders []ds.OrderResponse
 
+	// Разрешённые статусы для выдачи
+	allowedStatuses := map[string]bool{
+		"сформирован": true,
+		"завершен":    true,
+		"отклонен":    true,
+	}
+
 	query := r.db.
 		Table("material_orders mo").
 		Select(`mo.id, 
@@ -42,9 +49,19 @@ func (r *Repository) GetOrdersFiltered(status, start, end string) ([]ds.OrderRes
 	if status != "" {
 		statuses := []string{}
 		for _, s := range strings.Split(status, ",") {
-			statuses = append(statuses, strings.TrimSpace(s))
+			s = strings.TrimSpace(s)
+			if allowedStatuses[s] { // оставляем только разрешённые
+				statuses = append(statuses, s)
+			}
+		}
+		if len(statuses) == 0 {
+			// Если после фильтра ничего не осталось — не выдаём ни один заказ
+			return []ds.OrderResponse{}, nil
 		}
 		query = query.Where("mo.request_status IN ?", statuses)
+	} else {
+		// Если статус не указан — выдаём все разрешённые статусы
+		query = query.Where("mo.request_status IN ?", []string{"сформирован", "завершен", "отклонен"})
 	}
 
 	// фильтр по диапазону дат

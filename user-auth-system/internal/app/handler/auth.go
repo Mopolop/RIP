@@ -11,6 +11,17 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
+// LoginUserAPI godoc
+// @Summary      Аутентификация пользователя
+// @Description  Авторизует пользователя по логину и паролю, возвращает JWT-токен и время жизни
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        request  body      ds.LoginReq  true  "Данные пользователя"
+// @Success      200      {object}  ds.LoginResponse
+// @Failure      400      {object}  map[string]string  "Неверный формат запроса"
+// @Failure      401      {object}  map[string]string  "Пользователь не найден или неверный пароль"
+// @Router       /api/users/login [post]
 func (h *Handler) LoginUserAPI(ctx *gin.Context) {
 	var body struct {
 		Login    string `json:"login"`
@@ -53,16 +64,27 @@ func (h *Handler) LoginUserAPI(ctx *gin.Context) {
 		return
 	}
 
-	// Возвращаем JSON с токеном и данными пользователя
+	// Добавляем токен в заголовок
+	ctx.Header("Authorization", "Bearer "+strToken)
+
+	// Возвращаем только данные пользователя без токена
 	ctx.JSON(http.StatusOK, gin.H{
-		"id":          user.ID,
-		"login":       user.Login,
-		"role":        user.Role,
-		"accessToken": strToken,
+		"id":    user.ID,
+		"login": user.Login,
+		"role":  user.Role,
 	})
 }
 
-// LogoutUserAPI сохраняет JWT в блеклисте Redis
+// LogoutUserAPI godoc
+// @Summary      Деаутентификация пользователя
+// @Description  Добавляет JWT-токен в черный список (блеклист) Redis, чтобы он стал недействительным
+// @Tags         auth
+// @Security     BearerAuth
+// @Produce      json
+// @Success      200  "Успешный выход"
+// @Failure      400  {object}  ds.ErrorResponse  "Некорректный токен"
+// @Failure      500  {object}  ds.ErrorResponse  "Ошибка при записи токена в блеклист"
+// @Router       /api/users/logout [post]
 func (h *Handler) LogoutUserAPI(ctx *gin.Context) {
 	authHeader := ctx.GetHeader("Authorization")
 	const prefix = "Bearer "
@@ -82,7 +104,7 @@ func (h *Handler) LogoutUserAPI(ctx *gin.Context) {
 		return
 	}
 
-	// Записываем в блеклист redis с TTL равным оставшемуся сроку жизни токена (берём ExpiresIn из конфига)
+	// Записываем в блеклист redis с TTL равным оставшемуся сроку жизни токена
 	if h.Redis == nil {
 		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
@@ -100,6 +122,7 @@ func (h *Handler) WithAuthCheck(allowedRoles ...role.Role) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authHeader := ctx.GetHeader("Authorization")
 		const prefix = "Bearer "
+
 		if !strings.HasPrefix(authHeader, prefix) {
 			ctx.AbortWithStatus(http.StatusForbidden)
 			return

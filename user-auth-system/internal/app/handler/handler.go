@@ -53,10 +53,6 @@ func (h *Handler) RegisterHandler(router *gin.Engine) {
 		auth.PUT("/users/:id", h.UpdateUserAPI)
 
 		// Материалы
-		auth.POST("/material", h.CreateMaterialAPI)                   // только Admin можно, если нужно — выделить отдельно
-		auth.PUT("/material/:id", h.UpdateMaterialAPI)                // Admin
-		auth.POST("/material/:id/image", h.UploadMaterialImage)       // Admin
-		auth.POST("/material/:id/delete", h.DeleteMaterialLogicalAPI) // Admin
 		auth.GET("/materials_order/:id", h.GetMaterialsOrder)
 		auth.POST("/orders/draft/add/:id", h.AddMaterialToDraftOrderAPI)
 
