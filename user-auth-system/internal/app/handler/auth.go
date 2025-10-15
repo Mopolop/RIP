@@ -124,7 +124,8 @@ func (h *Handler) WithAuthCheck(allowedRoles ...role.Role) gin.HandlerFunc {
 		const prefix = "Bearer "
 
 		if !strings.HasPrefix(authHeader, prefix) {
-			ctx.AbortWithStatus(http.StatusForbidden)
+			// Нет токена → 401
+			ctx.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
 
@@ -133,8 +134,8 @@ func (h *Handler) WithAuthCheck(allowedRoles ...role.Role) gin.HandlerFunc {
 		// Проверяем блеклист Redis
 		if h.Redis != nil {
 			if err := h.Redis.CheckJWTInBlacklist(ctx.Request.Context(), jwtStr); err == nil {
-				// токен в блеклисте
-				ctx.AbortWithStatus(http.StatusForbidden)
+				// токен в блеклисте → 401
+				ctx.AbortWithStatus(http.StatusUnauthorized)
 				return
 			}
 		}
@@ -144,13 +145,13 @@ func (h *Handler) WithAuthCheck(allowedRoles ...role.Role) gin.HandlerFunc {
 			return []byte(h.Config.JWT.AccessSecret), nil
 		})
 		if err != nil || !token.Valid {
-			ctx.AbortWithStatus(http.StatusForbidden)
+			ctx.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
 
 		claims, ok := token.Claims.(*ds.JWTClaims)
 		if !ok {
-			ctx.AbortWithStatus(http.StatusForbidden)
+			ctx.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
 
@@ -164,6 +165,7 @@ func (h *Handler) WithAuthCheck(allowedRoles ...role.Role) gin.HandlerFunc {
 				}
 			}
 			if !allowed {
+				// Авторизован, но нет нужной роли → 403
 				ctx.AbortWithStatus(http.StatusForbidden)
 				return
 			}

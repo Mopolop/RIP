@@ -30,21 +30,15 @@ func (h *Handler) RegisterHandler(router *gin.Engine) {
 	// ---------------------------
 	// Публичные маршруты
 	// ---------------------------
-	router.GET("/", h.GetMaterials)
-	router.GET("/detailed_material/:id", h.GetMaterial)
-	router.GET("/materials_order/:id", h.GetMaterialsOrder)
-	router.GET("/api/material/:id", h.GetMaterialAPI)
 	router.GET("/api/materials", h.GetMaterialsAPI)
-
+	router.GET("/detailed_material/:id", h.GetMaterial)
+	router.POST("/sign_up", h.Register)
 	router.POST("/api/users/login", h.LoginUserAPI)
 	router.POST("/api/users/logout", h.LogoutUserAPI)
-	router.POST("/sign_up", h.Register)
 
 	// ---------------------------
-	// Защищённые маршруты
+	// Защищённые маршруты для всех авторизованных (User + Admin)
 	// ---------------------------
-
-	// Все авторизованные пользователи (User и Admin)
 	auth := router.Group("/api")
 	auth.Use(h.WithAuthCheck(role.User, role.Admin))
 	{
@@ -52,30 +46,31 @@ func (h *Handler) RegisterHandler(router *gin.Engine) {
 		auth.GET("/users/:id", h.GetUserAPI)
 		auth.PUT("/users/:id", h.UpdateUserAPI)
 
-		// Материалы
+		// Материалы и заказы (все методы кроме админских)
 		auth.GET("/materials_order/:id", h.GetMaterialsOrder)
+		auth.GET("/api/material/:id", h.GetMaterialAPI)
 		auth.POST("/orders/draft/add/:id", h.AddMaterialToDraftOrderAPI)
-
-		// Заказы
 		auth.GET("/orders", h.GetOrdersAPI)
 		auth.GET("/orders/:id", h.GetOrderWithMaterialsAPI)
 		auth.GET("/orders/draft/cart", h.GetDraftCartAPI)
 		auth.PUT("/orders/:id", h.UpdateMaterialOrderAPI)
 		auth.PUT("/orders/:id/form", h.FormMaterialOrderAPI)
-		auth.PUT("/orders/:id/complete", h.CompleteOrRejectOrderAPI)
 		auth.PUT("/orders/materials/:order_id/:material_id/wall_length", h.UpdateWallLengthAPI)
 		auth.POST("/orders/delete/:id", h.DeleteMaterialsOrderAPI)
 		auth.DELETE("/orders/:order_id/material/:material_id", h.DeleteMaterialFromOrderAPI)
 	}
 
-	// Если нужно отдельное ограничение только для Admin, можно сделать другой group:
-	admin := router.Group("/api/admin")
+	// ---------------------------
+	// Только Admin
+	// ---------------------------
+	admin := router.Group("/api")
 	admin.Use(h.WithAuthCheck(role.Admin))
 	{
 		admin.POST("/material", h.CreateMaterialAPI)
 		admin.PUT("/material/:id", h.UpdateMaterialAPI)
 		admin.POST("/material/:id/image", h.UploadMaterialImage)
 		admin.POST("/material/:id/delete", h.DeleteMaterialLogicalAPI)
+		admin.PUT("/orders/:id/complete", h.CompleteOrRejectOrderAPI)
 	}
 }
 
