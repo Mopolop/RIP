@@ -31,7 +31,7 @@ func (h *Handler) RegisterHandler(router *gin.Engine) {
 	// Публичные маршруты
 	// ---------------------------
 	router.GET("/api/materials", h.GetMaterialsAPI)
-	router.GET("/detailed_material/:id", h.GetMaterial)
+	router.GET("/api/materials/:id", h.GetMaterialAPI)
 	router.POST("/sign_up", h.Register)
 	router.POST("/api/users/login", h.LoginUserAPI)
 	router.POST("/api/users/logout", h.LogoutUserAPI)
