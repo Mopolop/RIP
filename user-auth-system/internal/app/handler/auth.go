@@ -14,7 +14,7 @@ import (
 // LoginUserAPI godoc
 // @Summary      Аутентификация пользователя
 // @Description  Авторизует пользователя по логину и паролю, возвращает JWT-токен и время жизни
-// @Tags         auth
+// @Tags		 Управление пользователями
 // @Accept       json
 // @Produce      json
 // @Param        request  body      ds.LoginReq  true  "Данные пользователя"
@@ -78,7 +78,7 @@ func (h *Handler) LoginUserAPI(ctx *gin.Context) {
 // LogoutUserAPI godoc
 // @Summary      Деаутентификация пользователя
 // @Description  Добавляет JWT-токен в черный список (блеклист) Redis, чтобы он стал недействительным
-// @Tags         auth
+// @Tags         Управление пользователями
 // @Security     BearerAuth
 // @Produce      json
 // @Success      200  "Успешный выход"

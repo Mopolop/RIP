@@ -2,11 +2,12 @@ package handler
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 	"time"
 	"user-auth-system/internal/app/ds"
+
+	"github.com/gin-gonic/gin"
 )
 
 // POST /orders/delete/:id - пометить заказ как удалённый
@@ -66,7 +67,7 @@ func (h *Handler) GetDraftCartAPI(ctx *gin.Context) {
 // GetOrdersAPI godoc
 // @Summary      Получить список заказов
 // @Description  Возвращает список заказов с возможностью фильтрации по статусу и диапазону дат. Разрешённые статусы: "сформирован", "завершен", "отклонен".
-// @Tags         orders
+// @Tags		 Заявки с материалами
 // @Accept       json
 // @Produce      json
 // @Param        status  query     string  false  "Статус заказа (сформирован, завершен, отклонен), можно указать несколько через запятую"

@@ -30,7 +30,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "orders"
+                    "Заявки с материалами"
                 ],
                 "summary": "Получить список заказов",
                 "parameters": [
@@ -79,7 +79,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "Управление пользователями"
                 ],
                 "summary": "Аутентификация пользователя",
                 "parameters": [
@@ -133,7 +133,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "Управление пользователями"
                 ],
                 "summary": "Деаутентификация пользователя",
                 "responses": {
@@ -165,7 +165,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "Управление пользователями"
                 ],
                 "summary": "Регистрация нового пользователя",
                 "parameters": [

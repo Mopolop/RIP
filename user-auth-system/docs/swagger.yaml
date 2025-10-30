@@ -130,7 +130,7 @@ paths:
       - BearerAuth: []
       summary: Получить список заказов
       tags:
-      - orders
+      - Заявки с материалами
   /api/users/login:
     post:
       consumes:
@@ -165,7 +165,7 @@ paths:
             type: object
       summary: Аутентификация пользователя
       tags:
-      - auth
+      - Управление пользователями
   /api/users/logout:
     post:
       description: Добавляет JWT-токен в черный список (блеклист) Redis, чтобы он
@@ -187,7 +187,7 @@ paths:
       - BearerAuth: []
       summary: Деаутентификация пользователя
       tags:
-      - auth
+      - Управление пользователями
   /sign_up:
     post:
       consumes:
@@ -222,7 +222,7 @@ paths:
             type: object
       summary: Регистрация нового пользователя
       tags:
-      - auth
+      - Управление пользователями
 schemes:
 - http
 securityDefinitions:
