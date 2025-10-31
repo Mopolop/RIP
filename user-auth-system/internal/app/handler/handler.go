@@ -47,17 +47,15 @@ func (h *Handler) RegisterHandler(router *gin.Engine) {
 		auth.PUT("/users/:id", h.UpdateUserAPI)
 
 		// Материалы и заказы (все методы кроме админских)
-		auth.GET("/materials_order/:id", h.GetMaterialsOrder)
-		auth.GET("/api/material/:id", h.GetMaterialAPI)
-		auth.POST("/orders/draft/add/:id", h.AddMaterialToDraftOrderAPI)
-		auth.GET("/orders", h.GetOrdersAPI)
-		auth.GET("/orders/:id", h.GetOrderWithMaterialsAPI)
-		auth.GET("/orders/draft/cart", h.GetDraftCartAPI)
-		auth.PUT("/orders/:id", h.UpdateMaterialOrderAPI)
-		auth.PUT("/orders/:id/form", h.FormMaterialOrderAPI)
-		auth.PUT("/orders/materials/:order_id/:material_id/wall_length", h.UpdateWallLengthAPI)
-		auth.POST("/orders/delete/:id", h.DeleteMaterialsOrderAPI)
-		auth.DELETE("/orders/:order_id/material/:material_id", h.DeleteMaterialFromOrderAPI)
+		auth.POST("/material_orders/draft/add/:id", h.AddMaterialToDraftOrderAPI)
+		auth.GET("/material_orders", h.GetOrdersAPI)
+		auth.GET("/material_orders/:id", h.GetOrderWithMaterialsAPI)
+		auth.GET("/material_orders/draft/cart", h.GetDraftCartAPI)
+		auth.PUT("/material_orders/:id", h.UpdateMaterialOrderAPI)
+		auth.PUT("/material_orders/:id/form", h.FormMaterialOrderAPI)
+		auth.PUT("/material_orders/materials/:order_id/:material_id/wall_length", h.UpdateWallLengthAPI)
+		auth.POST("/material_orders/delete/:id", h.DeleteMaterialsOrderAPI)
+		auth.DELETE("/material_orders/:order_id/material/:material_id", h.DeleteMaterialFromOrderAPI)
 	}
 
 	// ---------------------------
@@ -70,7 +68,7 @@ func (h *Handler) RegisterHandler(router *gin.Engine) {
 		admin.PUT("/material/:id", h.UpdateMaterialAPI)
 		admin.POST("/material/:id/image", h.UploadMaterialImage)
 		admin.POST("/material/:id/delete", h.DeleteMaterialLogicalAPI)
-		admin.PUT("/orders/:id/complete", h.CompleteOrRejectOrderAPI)
+		admin.PUT("/material_orders/:id/complete", h.CompleteOrRejectOrderAPI)
 	}
 }
 
@@ -107,4 +105,23 @@ func (h *Handler) errorHandler(ctx *gin.Context, errorStatusCode int, err error)
 		"status":      "error",
 		"description": err.Error(),
 	})
+}
+
+// getUserFromContext извлекает ID и роль пользователя из gin.Context
+// Возвращает userID и role (int), при отсутствии — нули
+func (h *Handler) getUserFromContext(ctx *gin.Context) (int, int) {
+	uid, _ := ctx.Get("userID")
+	rid, _ := ctx.Get("role")
+
+	userID := 0
+	if v, ok := uid.(int); ok {
+		userID = v
+	}
+
+	roleID := 0
+	if r, ok := rid.(int); ok {
+		roleID = r
+	}
+
+	return userID, roleID
 }

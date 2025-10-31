@@ -25,8 +25,8 @@
             <button type="submit" style="display:none;"></button>
         </form>
 
-      {{if gt .orderID 0}}
-<a href="/materials_order/{{.orderID}}" class="card-link">
+    {{if gt .orderID 0}}
+    <a href="/material_orders/{{.orderID}}" class="card-link">
     <div class="cart">  
         <img src="http://localhost:9000/materials/cart-icon.png" alt="Корзина">
         <div class="cart-count-badge">{{.orderCount}}</div>
@@ -61,7 +61,7 @@
 
         <!-- Кнопка добавления в заказ -->
         
-       <form action="/orders/draft/add/{{.ID}}" method="post">
+    <form action="/material_orders/draft/add/{{.ID}}" method="post">
     <div class="card-button-container">
         <button class="card-button">В корзину</button>
     </div>

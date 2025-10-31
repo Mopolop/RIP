@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"math"
@@ -56,6 +57,60 @@ func (r *Repository) GetOrdersFiltered(status, start, end string) ([]ds.OrderRes
 		}
 		if len(statuses) == 0 {
 			// Если после фильтра ничего не осталось — не выдаём ни один заказ
+			return []ds.OrderResponse{}, nil
+		}
+		query = query.Where("mo.request_status IN ?", statuses)
+	} else {
+		// Если статус не указан — выдаём все разрешённые статусы
+		query = query.Where("mo.request_status IN ?", []string{"сформирован", "завершен", "отклонен"})
+	}
+
+	// фильтр по диапазону дат
+	if start != "" && end != "" {
+		query = query.Where("mo.date_create BETWEEN ? AND ?", start, end)
+	}
+
+	if err := query.Scan(&orders).Error; err != nil {
+		return nil, fmt.Errorf("ошибка при получении заказов: %w", err)
+	}
+
+	return orders, nil
+}
+
+// GetOrdersFilteredForUser возвращает заказы указанного пользователя (creator_id = userID)
+func (r *Repository) GetOrdersFilteredForUser(ctx context.Context, status, start, end string, userID int) ([]ds.OrderResponse, error) {
+	var orders []ds.OrderResponse
+
+	// Разрешённые статусы для выдачи
+	allowedStatuses := map[string]bool{
+		"сформирован": true,
+		"завершен":    true,
+		"отклонен":    true,
+	}
+
+	query := r.db.WithContext(ctx).
+		Table("material_orders mo").
+		Select(`mo.id, 
+				mo.request_status as status, 
+				mo.date_create, 
+				mo.date_form, 
+				mo.date_finish, 
+				u1.login as moderator, 
+				u2.login as creator`).
+		Joins("LEFT JOIN users u1 ON u1.id = mo.moderator_id").
+		Joins("LEFT JOIN users u2 ON u2.id = mo.creator_id").
+		Where("mo.creator_id = ?", userID)
+
+	// фильтр по статусу
+	if status != "" {
+		statuses := []string{}
+		for _, s := range strings.Split(status, ",") {
+			s = strings.TrimSpace(s)
+			if allowedStatuses[s] { // оставляем только разрешённые
+				statuses = append(statuses, s)
+			}
+		}
+		if len(statuses) == 0 {
 			return []ds.OrderResponse{}, nil
 		}
 		query = query.Where("mo.request_status IN ?", statuses)

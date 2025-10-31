@@ -4,13 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/minio/minio-go/v7"
-	"gorm.io/gorm"
 	"mime/multipart"
 	"path/filepath"
 	"strings"
 	"unicode"
 	"user-auth-system/internal/app/ds"
+
+	"github.com/minio/minio-go/v7"
+	"gorm.io/gorm"
 )
 
 func (r *Repository) GetMaterials() ([]ds.Material, error) {
@@ -32,9 +33,9 @@ func (r *Repository) GetMaterialsByTitle(title string) ([]ds.Material, error) {
 }
 
 // Получаем черновой заказ пользователя
-func (r *Repository) GetDraftOrder(userID int) (*ds.MaterialOrder, error) {
+func (r *Repository) GetDraftOrder(ctx context.Context, userID int) (*ds.MaterialOrder, error) {
 	var order ds.MaterialOrder
-	err := r.db.Where("creator_id = ? AND request_status = ?", userID, "черновик").First(&order).Error
+	err := r.db.WithContext(ctx).Where("creator_id = ? AND request_status = ?", userID, "черновик").First(&order).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil // черновик отсутствует
@@ -45,14 +46,14 @@ func (r *Repository) GetDraftOrder(userID int) (*ds.MaterialOrder, error) {
 }
 
 // Создаём новый черновой заказ
-func (r *Repository) CreateDraftOrder(userID int) (*ds.MaterialOrder, error) {
+func (r *Repository) CreateDraftOrder(ctx context.Context, userID int) (*ds.MaterialOrder, error) {
 	order := ds.MaterialOrder{
 		CreatorID:     userID,
 		RequestStatus: "черновик",
 		ModeratorID:   nil, // черновик создаётся без модератора
 	}
 
-	if err := r.db.Create(&order).Error; err != nil {
+	if err := r.db.WithContext(ctx).Create(&order).Error; err != nil {
 		return nil, err
 	}
 
@@ -60,9 +61,9 @@ func (r *Repository) CreateDraftOrder(userID int) (*ds.MaterialOrder, error) {
 }
 
 // Добавляем материал в заказ, если его там нет
-func (r *Repository) AddMaterialToOrder(orderID int, materialID int) error {
+func (r *Repository) AddMaterialToOrder(ctx context.Context, orderID int, materialID int) error {
 	var count int64
-	err := r.db.Model(&ds.MaterialMaterialOrder{}).Where("material_order_id = ? AND material_id = ?", orderID, materialID).Count(&count).Error
+	err := r.db.WithContext(ctx).Model(&ds.MaterialMaterialOrder{}).Where("material_order_id = ? AND material_id = ?", orderID, materialID).Count(&count).Error
 	if err != nil {
 		return err
 	}
@@ -74,7 +75,7 @@ func (r *Repository) AddMaterialToOrder(orderID int, materialID int) error {
 		MaterialID:      materialID,
 		MaterialOrderID: orderID,
 	}
-	return r.db.Create(&item).Error
+	return r.db.WithContext(ctx).Create(&item).Error
 }
 
 // Получаем количество материалов в заказе

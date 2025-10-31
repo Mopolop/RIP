@@ -30,11 +30,11 @@ func (h *Handler) DeleteMaterialsOrder(ctx *gin.Context) {
 
 // GET /api/orders/draft/cart
 func (h *Handler) GetDraftCartAPI(ctx *gin.Context) {
-	// Пока без авторизации — используем userID = 1
-	userID := 1
+	// Берём ID авторизованного пользователя из контекста
+	userID, _ := h.getUserFromContext(ctx)
 
 	// Ищем черновик
-	order, err := h.Repository.GetDraftOrder(userID)
+	order, err := h.Repository.GetDraftOrder(ctx.Request.Context(), userID)
 	if err != nil {
 		h.errorHandler(ctx, http.StatusInternalServerError, err)
 		return
@@ -82,7 +82,10 @@ func (h *Handler) GetOrdersAPI(ctx *gin.Context) {
 	start := ctx.Query("start") // формат YYYY-MM-DD
 	end := ctx.Query("end")
 
-	orders, err := h.Repository.GetOrdersFiltered(status, start, end)
+	// Получаем ID авторизованного пользователя
+	userID, _ := h.getUserFromContext(ctx)
+
+	orders, err := h.Repository.GetOrdersFilteredForUser(ctx.Request.Context(), status, start, end, userID)
 	if err != nil {
 		h.errorHandler(ctx, http.StatusInternalServerError, err)
 		return
@@ -105,6 +108,18 @@ func (h *Handler) GetOrderWithMaterialsAPI(ctx *gin.Context) {
 	order, materials, err := h.Repository.GetOrderByID(orderID)
 	if err != nil {
 		h.errorHandler(ctx, http.StatusNotFound, err)
+		return
+	}
+
+	// Проверяем, что запрашиваемый заказ принадлежит текущему пользователю или пользователь — Admin
+	userID, roleID := h.getUserFromContext(ctx)
+	isAdmin := false
+	if roleID == 2 { // role.Admin == 2
+		isAdmin = true
+	}
+	if !isAdmin && order.CreatorID != userID {
+		// не владелец и не админ — запрещено
+		ctx.AbortWithStatus(http.StatusForbidden)
 		return
 	}
 

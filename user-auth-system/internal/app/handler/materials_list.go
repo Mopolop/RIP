@@ -1,11 +1,12 @@
 package handler
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"net/http"
 	"strconv"
 	"user-auth-system/internal/app/ds"
+
+	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 func (h *Handler) GetMaterials(ctx *gin.Context) {
@@ -24,11 +25,11 @@ func (h *Handler) GetMaterials(ctx *gin.Context) {
 		return
 	}
 
-	// Для примера используем userID = 1
-	userID := 1
+	// Получаем ID авторизованного пользователя из контекста
+	userID, _ := h.getUserFromContext(ctx)
 
 	// Ищем черновой заказ пользователя
-	order, err := h.Repository.GetDraftOrder(userID)
+	order, err := h.Repository.GetDraftOrder(ctx.Request.Context(), userID)
 	var orderCount int64 = 0
 	if err != nil {
 		logrus.Warn("Не удалось получить черновой заказ: ", err)
@@ -63,19 +64,18 @@ func (h *Handler) AddMaterialToDraftOrder(ctx *gin.Context) {
 		h.errorHandler(ctx, http.StatusBadRequest, err)
 		return
 	}
-
-	// Для примера используем userID = 1
-	userID := 1
+	// Получаем ID авторизованного пользователя из контекста
+	userID, _ := h.getUserFromContext(ctx)
 
 	// Получаем черновой заказ
-	order, err := h.Repository.GetDraftOrder(userID)
+	order, err := h.Repository.GetDraftOrder(ctx.Request.Context(), userID)
 	if err != nil {
 		h.errorHandler(ctx, http.StatusInternalServerError, err)
 		return
 	}
 
 	if order == nil {
-		order, err = h.Repository.CreateDraftOrder(userID)
+		order, err = h.Repository.CreateDraftOrder(ctx.Request.Context(), userID)
 		if err != nil {
 			h.errorHandler(ctx, http.StatusInternalServerError, err)
 			return
@@ -83,7 +83,7 @@ func (h *Handler) AddMaterialToDraftOrder(ctx *gin.Context) {
 	}
 
 	// Добавляем материал
-	if err := h.Repository.AddMaterialToOrder(order.ID, materialID); err != nil {
+	if err := h.Repository.AddMaterialToOrder(ctx.Request.Context(), order.ID, materialID); err != nil {
 		h.errorHandler(ctx, http.StatusInternalServerError, err)
 		return
 	}
@@ -264,11 +264,11 @@ func (h *Handler) AddMaterialToDraftOrderAPI(ctx *gin.Context) {
 		return
 	}
 
-	// Для примера используем userID = 1
-	userID := 1
+	// Получаем ID авторизованного пользователя из контекста
+	userID, _ := h.getUserFromContext(ctx)
 
 	// Получаем черновой заказ пользователя
-	order, err := h.Repository.GetDraftOrder(userID)
+	order, err := h.Repository.GetDraftOrder(ctx.Request.Context(), userID)
 	if err != nil {
 		h.errorHandler(ctx, http.StatusInternalServerError, err)
 		return
@@ -276,7 +276,7 @@ func (h *Handler) AddMaterialToDraftOrderAPI(ctx *gin.Context) {
 
 	// Если чернового заказа нет — создаём новый
 	if order == nil {
-		order, err = h.Repository.CreateDraftOrder(userID)
+		order, err = h.Repository.CreateDraftOrder(ctx.Request.Context(), userID)
 		if err != nil {
 			h.errorHandler(ctx, http.StatusInternalServerError, err)
 			return
@@ -284,7 +284,7 @@ func (h *Handler) AddMaterialToDraftOrderAPI(ctx *gin.Context) {
 	}
 
 	// Добавляем материал в заказ
-	if err := h.Repository.AddMaterialToOrder(order.ID, materialID); err != nil {
+	if err := h.Repository.AddMaterialToOrder(ctx.Request.Context(), order.ID, materialID); err != nil {
 		h.errorHandler(ctx, http.StatusInternalServerError, err)
 		return
 	}
