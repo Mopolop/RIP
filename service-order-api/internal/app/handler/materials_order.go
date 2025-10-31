@@ -111,13 +111,21 @@ func (h *Handler) GetOrderWithMaterialsAPI(ctx *gin.Context) {
 		if mmo.WallLength.Valid {
 			wl = &mmo.WallLength.Float64
 		}
+
+		var mortarConsumption *float64
+		if mmo.MortarConsumption.Valid {
+			mortarConsumption = &mmo.MortarConsumption.Float64
+		}
+
 		materialsDTO = append(materialsDTO, ds.MaterialInOrder{
-			ID:          mmo.MaterialID,
-			Title:       mmo.Material.Title,
-			Consumption: mmo.Material.Consumption,
-			Count:       mmo.Material.Count,
-			Image:       mmo.Material.Image,
-			WallLength:  wl,
+			ID:                  mmo.MaterialID,
+			Title:               mmo.Material.Title,
+			Consumption:         mmo.Material.Consumption,
+			Count:               mmo.Material.Count,
+			Image:               mmo.Material.Image,
+			WallLength:          wl,
+			MaterialConsumption: mmo.MaterialConsumption,
+			MortarConsumption:   mortarConsumption,
 		})
 	}
 
@@ -152,6 +160,7 @@ func (h *Handler) GetOrderWithMaterialsAPI(ctx *gin.Context) {
 		"order":  resp,
 	})
 }
+
 func (h *Handler) UpdateMaterialOrderAPI(ctx *gin.Context) {
 	idStr := ctx.Param("id")
 	id, err := strconv.Atoi(idStr)
@@ -160,20 +169,17 @@ func (h *Handler) UpdateMaterialOrderAPI(ctx *gin.Context) {
 		return
 	}
 
-	// Читаем тело запроса как map
 	var raw map[string]interface{}
 	if err := ctx.BindJSON(&raw); err != nil {
 		h.errorHandler(ctx, http.StatusBadRequest, err)
 		return
 	}
 
-	// Разрешённые поля
 	allowed := map[string]bool{
 		"ceiling_height": true,
 		"wall_thickness": true,
 	}
 
-	// Проверяем лишние поля
 	for k := range raw {
 		if !allowed[k] {
 			h.errorHandler(ctx, http.StatusBadRequest, fmt.Errorf("недопустимое поле: %s", k))
@@ -181,7 +187,6 @@ func (h *Handler) UpdateMaterialOrderAPI(ctx *gin.Context) {
 		}
 	}
 
-	// Преобразуем map в DTO
 	var req ds.UpdateOrderRequest
 	if v, ok := raw["ceiling_height"]; ok {
 		if f, ok := v.(float64); ok {
@@ -199,15 +204,20 @@ func (h *Handler) UpdateMaterialOrderAPI(ctx *gin.Context) {
 		return
 	}
 
-	order, _, err := h.Repository.GetOrderByID(id)
-	if err != nil {
-		h.errorHandler(ctx, http.StatusInternalServerError, err)
-		return
+	// 🔹 Формируем ответ только с обновлёнными полями
+	updated := gin.H{
+		"id": id,
+	}
+	if req.CeilingHeight != nil {
+		updated["ceiling_height"] = *req.CeilingHeight
+	}
+	if req.WallThickness != nil {
+		updated["wall_thickness"] = *req.WallThickness
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status": "success",
-		"order":  order,
+		"status":  "success",
+		"updated": updated,
 	})
 }
 

@@ -21,10 +21,12 @@ type Material struct {
 }
 
 type MaterialInOrder struct {
-	ID          int      `json:"id"`
-	Title       string   `json:"title"`
-	Consumption float64  `json:"consumption"`
-	Count       int      `json:"count"`
-	Image       string   `json:"image"`
-	WallLength  *float64 `json:"wall_length,omitempty"`
+	ID                  int      `json:"id"`
+	Title               string   `json:"title"`
+	Consumption         float64  `json:"consumption"`
+	Count               int      `json:"count"`
+	Image               string   `json:"image"`
+	WallLength          *float64 `json:"wall_length,omitempty"`
+	MaterialConsumption int      `json:"material_consumption"`
+	MortarConsumption   *float64 `json:"mortar_consumption,omitempty"`
 }
