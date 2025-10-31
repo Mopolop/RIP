@@ -28,22 +28,32 @@ func (r *Repository) GetOrdersFiltered(status, start, end string) ([]ds.OrderRes
 
 	query := r.db.
 		Table("material_orders mo").
-		Select(`mo.id, 
-		        mo.request_status as status, 
-		        mo.date_create, 
-		        mo.date_form, 
-		        mo.date_finish, 
-		        u1.login as moderator, 
-		        u2.login as creator`).
+		Select(`
+			mo.id,
+			mo.request_status AS status,
+			mo.date_create,
+			mo.date_form,
+			mo.date_finish,
+			u1.login AS moderator,
+			u2.login AS creator,
+			COUNT(DISTINCT mmo.material_id) AS materials_count
+		`).
 		Joins("LEFT JOIN users u1 ON u1.id = mo.moderator_id").
-		Joins("LEFT JOIN users u2 ON u2.id = mo.creator_id")
+		Joins("LEFT JOIN users u2 ON u2.id = mo.creator_id").
+		Joins(`
+			LEFT JOIN material_material_orders mmo 
+			ON mmo.material_order_id = mo.id
+			AND mmo.material_consumption IS NOT NULL 
+			AND mmo.material_consumption <> 0
+			AND mmo.mortar_consumption IS NOT NULL 
+			AND mmo.mortar_consumption <> 0
+		`)
 
 	// фильтр по статусу
 	if status != "" {
 		statuses := []string{}
 		for _, s := range strings.Split(status, ",") {
 			s = strings.TrimSpace(s)
-			// Проверяем, что не пытаются фильтровать по черновику или удалённому
 			if s == "черновик" || s == "удален" {
 				return nil, fmt.Errorf("not_found")
 			}
@@ -59,6 +69,9 @@ func (r *Repository) GetOrdersFiltered(status, start, end string) ([]ds.OrderRes
 
 	// исключаем черновик и удалённые
 	query = query.Where("mo.request_status NOT IN ?", []string{"черновик", "удален"})
+
+	// группировка для корректного COUNT()
+	query = query.Group("mo.id, u1.login, u2.login")
 
 	if err := query.Scan(&orders).Error; err != nil {
 		return nil, fmt.Errorf("ошибка при получении заказов: %w", err)
