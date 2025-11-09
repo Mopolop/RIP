@@ -35,7 +35,7 @@ func (h *Handler) GetMaterials(ctx *gin.Context) {
 		logrus.Warn("Не удалось получить черновой заказ: ", err)
 	} else if order != nil {
 		// Получаем количество материалов в черновике
-		orderCount, err = h.Repository.GetOrderMaterialsCount(order.ID)
+		orderCount, err = h.Repository.GetOrderMaterialsCount(ctx.Request.Context(), order.ID)
 		if err != nil {
 			logrus.Warn("Не удалось получить количество материалов в черновике: ", err)
 			orderCount = 0
@@ -104,13 +104,12 @@ func (h *Handler) GetMaterialsOrder(ctx *gin.Context) {
 	// Если id == 0 — отвечаем унифицированным сообщением, не перенаправляя/не показывая внутреннюю ошибку
 	if id == 0 {
 		ctx.JSON(http.StatusNotFound, gin.H{
-			"status":      "error",
 			"description": "заказ не найден или удален",
 		})
 		return
 	}
 
-	order, mmos, err := h.Repository.GetOrderByID(id)
+	order, mmos, err := h.Repository.GetOrderByID(ctx.Request.Context(), id)
 	if err != nil {
 		h.errorHandler(ctx, http.StatusNotFound, err)
 		return
@@ -119,7 +118,6 @@ func (h *Handler) GetMaterialsOrder(ctx *gin.Context) {
 	// Если статус заказа не черновик, считаем, что заказа нет/он удалён
 	if order.RequestStatus != "черновик" {
 		ctx.JSON(http.StatusNotFound, gin.H{
-			"status":      "error",
 			"description": "заказ не найден или удален",
 		})
 		return
@@ -147,7 +145,6 @@ func (h *Handler) GetMaterialAPI(ctx *gin.Context) {
 	}
 	if material == nil {
 		ctx.JSON(http.StatusNotFound, gin.H{
-			"status":      "error",
 			"description": "материал не найден",
 		})
 		return
@@ -156,14 +153,12 @@ func (h *Handler) GetMaterialAPI(ctx *gin.Context) {
 	// Если материал найден, но он невидим — считаем, что он отсутствует
 	if !material.Visability {
 		ctx.JSON(http.StatusNotFound, gin.H{
-			"status":      "error",
 			"description": "материал не найден",
 		})
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status":   "success",
 		"material": material,
 	})
 }
@@ -179,7 +174,6 @@ func (h *Handler) GetMaterialsAPI(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status":    "success",
 		"materials": materials,
 	})
 }
@@ -201,7 +195,6 @@ func (h *Handler) CreateMaterialAPI(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, gin.H{
-		"status":   "success",
 		"material": input,
 	})
 }
@@ -228,7 +221,6 @@ func (h *Handler) UpdateMaterialAPI(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status":   "success",
 		"material": input,
 	})
 }
@@ -249,7 +241,6 @@ func (h *Handler) DeleteMaterialLogicalAPI(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status":  "success",
 		"message": "материал успешно скрыт",
 	})
 }
@@ -290,10 +281,9 @@ func (h *Handler) AddMaterialToDraftOrderAPI(ctx *gin.Context) {
 	}
 
 	// Получаем новое количество материалов в заказе
-	count, _ := h.Repository.GetOrderMaterialsCount(order.ID)
+	count, _ := h.Repository.GetOrderMaterialsCount(ctx.Request.Context(), order.ID)
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status":    "success",
 		"message":   "материал добавлен в черновой заказ",
 		"orderID":   order.ID,
 		"itemCount": count,

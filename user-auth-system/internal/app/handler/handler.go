@@ -35,6 +35,7 @@ func (h *Handler) RegisterHandler(router *gin.Engine) {
 	router.POST("/sign_up", h.Register)
 	router.POST("/api/users/login", h.LoginUserAPI)
 	router.POST("/api/users/logout", h.LogoutUserAPI)
+	router.GET("/api/material_orders/draft/cart", h.GetDraftCartAPI)
 
 	// ---------------------------
 	// Защищённые маршруты для всех авторизованных (User + Admin)
@@ -50,7 +51,6 @@ func (h *Handler) RegisterHandler(router *gin.Engine) {
 		auth.POST("/material_orders/draft/add/:id", h.AddMaterialToDraftOrderAPI)
 		auth.GET("/material_orders", h.GetOrdersAPI)
 		auth.GET("/material_orders/:id", h.GetOrderWithMaterialsAPI)
-		auth.GET("/material_orders/draft/cart", h.GetDraftCartAPI)
 		auth.PUT("/material_orders/:id", h.UpdateMaterialOrderAPI)
 		auth.PUT("/material_orders/:id/form", h.FormMaterialOrderAPI)
 		auth.PUT("/material_orders/materials/:order_id/:material_id/wall_length", h.UpdateWallLengthAPI)
@@ -102,7 +102,6 @@ func (h *Handler) RegisterStatic(router *gin.Engine) {
 func (h *Handler) errorHandler(ctx *gin.Context, errorStatusCode int, err error) {
 	logrus.Error(err.Error())
 	ctx.JSON(errorStatusCode, gin.H{
-		"status":      "error",
 		"description": err.Error(),
 	})
 }

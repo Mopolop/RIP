@@ -108,8 +108,7 @@ func (h *Handler) UpdateUserAPI(ctx *gin.Context) {
 		h.errorHandler(ctx, http.StatusInternalServerError, err)
 		return
 	}
-
-	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+	ctx.Status(http.StatusOK)
 }
 
 // Функция для хеширования пароля

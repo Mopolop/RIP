@@ -79,15 +79,15 @@ func (r *Repository) AddMaterialToOrder(ctx context.Context, orderID int, materi
 }
 
 // Получаем количество материалов в заказе
-func (r *Repository) GetOrderMaterialsCount(orderID int) (int64, error) {
+func (r *Repository) GetOrderMaterialsCount(ctx context.Context, orderID int) (int64, error) {
 	var count int64
-	err := r.db.Model(&ds.MaterialMaterialOrder{}).Where("material_order_id = ?", orderID).Count(&count).Error
+	err := r.db.WithContext(ctx).Model(&ds.MaterialMaterialOrder{}).Where("material_order_id = ?", orderID).Count(&count).Error
 	return count, err
 }
 
 // SetOrderStatus обновляет статус заказа по его ID
-func (r *Repository) SetOrderStatus(orderID int, status string) error {
-	return r.db.Model(&ds.MaterialOrder{}).Where("id = ?", orderID).Update("request_status", status).Error
+func (r *Repository) SetOrderStatus(ctx context.Context, orderID int, status string) error {
+	return r.db.WithContext(ctx).Model(&ds.MaterialOrder{}).Where("id = ?", orderID).Update("request_status", status).Error
 }
 
 // Получаем один материал по ID

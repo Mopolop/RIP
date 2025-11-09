@@ -10,14 +10,14 @@ import (
 	"user-auth-system/internal/app/ds"
 )
 
-func (r *Repository) GetOrderByID(id int) (ds.MaterialOrder, []ds.MaterialMaterialOrder, error) {
+func (r *Repository) GetOrderByID(ctx context.Context, id int) (ds.MaterialOrder, []ds.MaterialMaterialOrder, error) {
 	var order ds.MaterialOrder
-	if err := r.db.First(&order, id).Error; err != nil {
+	if err := r.db.WithContext(ctx).First(&order, id).Error; err != nil {
 		return ds.MaterialOrder{}, nil, fmt.Errorf("заказ с ID=%d не найден", id)
 	}
 
 	var mmos []ds.MaterialMaterialOrder
-	if err := r.db.Preload("Material").Where("material_order_id = ?", id).Find(&mmos).Error; err != nil {
+	if err := r.db.WithContext(ctx).Preload("Material").Where("material_order_id = ?", id).Find(&mmos).Error; err != nil {
 		return ds.MaterialOrder{}, nil, err
 	}
 
@@ -131,7 +131,7 @@ func (r *Repository) GetOrdersFilteredForUser(ctx context.Context, status, start
 	return orders, nil
 }
 
-func (r *Repository) UpdateMaterialOrder(orderID int, req ds.UpdateOrderRequest) error {
+func (r *Repository) UpdateMaterialOrder(ctx context.Context, orderID int, req ds.UpdateOrderRequest) error {
 	updates := make(map[string]interface{})
 
 	if req.CeilingHeight != nil {
@@ -145,13 +145,13 @@ func (r *Repository) UpdateMaterialOrder(orderID int, req ds.UpdateOrderRequest)
 		return nil // ничего менять не нужно
 	}
 
-	return r.db.Model(&ds.MaterialOrder{}).Where("id = ?", orderID).Updates(updates).Error
+	return r.db.WithContext(ctx).Model(&ds.MaterialOrder{}).Where("id = ?", orderID).Updates(updates).Error
 }
 
-func (r *Repository) FormMaterialOrder(orderID int) error {
+func (r *Repository) FormMaterialOrder(ctx context.Context, orderID int) error {
 	// Проверяем, что все wall_length заполнены
 	var count int64
-	if err := r.db.Model(&ds.MaterialMaterialOrder{}).
+	if err := r.db.WithContext(ctx).Model(&ds.MaterialMaterialOrder{}).
 		Where("material_order_id = ? AND wall_length IS NULL", orderID).
 		Count(&count).Error; err != nil {
 		return fmt.Errorf("ошибка проверки wall_length: %w", err)
@@ -168,7 +168,7 @@ func (r *Repository) FormMaterialOrder(orderID int) error {
 	}
 
 	// Обновляем только если текущий статус черновик
-	if err := r.db.Model(&ds.MaterialOrder{}).
+	if err := r.db.WithContext(ctx).Model(&ds.MaterialOrder{}).
 		Where("id = ? AND request_status = ?", orderID, "черновик").
 		Updates(updates).Error; err != nil {
 		return fmt.Errorf("ошибка обновления заказа: %w", err)
@@ -177,9 +177,9 @@ func (r *Repository) FormMaterialOrder(orderID int) error {
 	return nil
 }
 
-func (r *Repository) CompleteOrRejectOrder(orderID int, req ds.CompleteOrderRequest) error {
+func (r *Repository) CompleteOrRejectOrder(ctx context.Context, orderID int, req ds.CompleteOrderRequest) error {
 	var order ds.MaterialOrder
-	if err := r.db.First(&order, orderID).Error; err != nil {
+	if err := r.db.WithContext(ctx).First(&order, orderID).Error; err != nil {
 		return fmt.Errorf("заказ с ID=%d не найден", orderID)
 	}
 
@@ -190,7 +190,7 @@ func (r *Repository) CompleteOrRejectOrder(orderID int, req ds.CompleteOrderRequ
 		"date_finish":    time.Now(),
 	}
 
-	if err := r.db.Model(&ds.MaterialOrder{}).Where("id = ?", orderID).Updates(updates).Error; err != nil {
+	if err := r.db.WithContext(ctx).Model(&ds.MaterialOrder{}).Where("id = ?", orderID).Updates(updates).Error; err != nil {
 		return fmt.Errorf("не удалось обновить заказ: %w", err)
 	}
 
@@ -201,7 +201,7 @@ func (r *Repository) CompleteOrRejectOrder(orderID int, req ds.CompleteOrderRequ
 
 	// Рассчитываем расход материалов и раствора (только если заказ завершён)
 	var mmos []ds.MaterialMaterialOrder
-	if err := r.db.Preload("Material").Where("material_order_id = ?", orderID).Find(&mmos).Error; err != nil {
+	if err := r.db.WithContext(ctx).Preload("Material").Where("material_order_id = ?", orderID).Find(&mmos).Error; err != nil {
 		return err
 	}
 
@@ -218,7 +218,7 @@ func (r *Repository) CompleteOrRejectOrder(orderID int, req ds.CompleteOrderRequ
 				Valid:   true,
 			}
 
-			if err := r.db.Save(&mmo).Error; err != nil {
+			if err := r.db.WithContext(ctx).Save(&mmo).Error; err != nil {
 				return err
 			}
 		}
@@ -227,11 +227,11 @@ func (r *Repository) CompleteOrRejectOrder(orderID int, req ds.CompleteOrderRequ
 	return nil
 }
 
-func (r *Repository) SoftDeleteOrder(orderID int) error {
+func (r *Repository) SoftDeleteOrder(ctx context.Context, orderID int) error {
 	updates := map[string]interface{}{
 		"request_status": "удален",
 		"date_form":      time.Now(), // дата завершения
 	}
 
-	return r.db.Model(&ds.MaterialOrder{}).Where("id = ?", orderID).Updates(updates).Error
+	return r.db.WithContext(ctx).Model(&ds.MaterialOrder{}).Where("id = ?", orderID).Updates(updates).Error
 }

@@ -2,9 +2,10 @@ package handler
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // DELETE /api/orders/:order_id/material/:material_id
@@ -24,13 +25,12 @@ func (h *Handler) DeleteMaterialFromOrderAPI(ctx *gin.Context) {
 		return
 	}
 
-	if err := h.Repository.DeleteMaterialFromOrder(materialID, orderID); err != nil {
+	if err := h.Repository.DeleteMaterialFromOrder(ctx.Request.Context(), materialID, orderID); err != nil {
 		h.errorHandler(ctx, http.StatusInternalServerError, err)
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status":      "success",
 		"material_id": materialID,
 		"order_id":    orderID,
 		"message":     "услуга удалена из заявки",
@@ -63,13 +63,12 @@ func (h *Handler) UpdateWallLengthAPI(ctx *gin.Context) {
 		return
 	}
 
-	if err := h.Repository.UpdateWallLength(materialID, orderID, req.WallLength); err != nil {
+	if err := h.Repository.UpdateWallLength(ctx.Request.Context(), materialID, orderID, req.WallLength); err != nil {
 		h.errorHandler(ctx, http.StatusInternalServerError, err)
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status":      "success",
 		"material_id": materialID,
 		"order_id":    orderID,
 		"wall_length": req.WallLength,

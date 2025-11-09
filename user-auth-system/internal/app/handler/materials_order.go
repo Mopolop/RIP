@@ -19,7 +19,7 @@ func (h *Handler) DeleteMaterialsOrder(ctx *gin.Context) {
 		return
 	}
 
-	if err := h.Repository.SetOrderStatus(id, "удален"); err != nil {
+	if err := h.Repository.SetOrderStatus(ctx.Request.Context(), id, "удален"); err != nil {
 		h.errorHandler(ctx, http.StatusInternalServerError, err)
 		return
 	}
@@ -29,38 +29,50 @@ func (h *Handler) DeleteMaterialsOrder(ctx *gin.Context) {
 }
 
 // GET /api/orders/draft/cart
+// GET /api/orders/draft/cart
+// GET /api/orders/draft/cart
 func (h *Handler) GetDraftCartAPI(ctx *gin.Context) {
-	// Берём ID авторизованного пользователя из контекста
 	userID, _ := h.getUserFromContext(ctx)
 
-	// Ищем черновик
-	order, err := h.Repository.GetDraftOrder(ctx.Request.Context(), userID)
-	if err != nil {
-		h.errorHandler(ctx, http.StatusInternalServerError, err)
-		return
-	}
-
-	if order == nil {
-		// Если черновика нет — возвращаем пустую корзину
+	// Если пользователь не найден — как в GetCartJSON
+	if userID == 0 {
 		ctx.JSON(http.StatusOK, gin.H{
-			"status":    "success",
-			"orderID":   0,
-			"itemCount": 0,
+			"request_id": -1,
+			"count":      0,
 		})
 		return
 	}
 
-	// Считаем количество услуг
-	count, err := h.Repository.GetOrderMaterialsCount(order.ID)
+	// Ищем черновик
+	order, err := h.Repository.GetDraftOrder(ctx.Request.Context(), userID)
 	if err != nil {
-		h.errorHandler(ctx, http.StatusInternalServerError, err)
+		ctx.JSON(http.StatusOK, gin.H{
+			"request_id": -1,
+			"count":      0,
+		})
+		return
+	}
+
+	if order == nil {
+		ctx.JSON(http.StatusOK, gin.H{
+			"request_id": -1,
+			"count":      0,
+		})
+		return
+	}
+
+	count, err := h.Repository.GetOrderMaterialsCount(ctx.Request.Context(), order.ID)
+	if err != nil {
+		ctx.JSON(http.StatusOK, gin.H{
+			"request_id": -1,
+			"count":      0,
+		})
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status":    "success",
-		"orderID":   order.ID,
-		"itemCount": count,
+		"request_id": order.ID,
+		"count":      count,
 	})
 }
 
@@ -92,7 +104,6 @@ func (h *Handler) GetOrdersAPI(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status": "success",
 		"orders": orders,
 	})
 }
@@ -105,7 +116,7 @@ func (h *Handler) GetOrderWithMaterialsAPI(ctx *gin.Context) {
 		return
 	}
 
-	order, materials, err := h.Repository.GetOrderByID(orderID)
+	order, materials, err := h.Repository.GetOrderByID(ctx.Request.Context(), orderID)
 	if err != nil {
 		h.errorHandler(ctx, http.StatusNotFound, err)
 		return
@@ -167,8 +178,7 @@ func (h *Handler) GetOrderWithMaterialsAPI(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status": "success",
-		"order":  resp,
+		"order": resp,
 	})
 }
 
@@ -214,20 +224,19 @@ func (h *Handler) UpdateMaterialOrderAPI(ctx *gin.Context) {
 		}
 	}
 
-	if err := h.Repository.UpdateMaterialOrder(id, req); err != nil {
+	if err := h.Repository.UpdateMaterialOrder(ctx.Request.Context(), id, req); err != nil {
 		h.errorHandler(ctx, http.StatusInternalServerError, err)
 		return
 	}
 
-	order, _, err := h.Repository.GetOrderByID(id)
+	order, _, err := h.Repository.GetOrderByID(ctx.Request.Context(), id)
 	if err != nil {
 		h.errorHandler(ctx, http.StatusInternalServerError, err)
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status": "success",
-		"order":  order,
+		"order": order,
 	})
 }
 
@@ -239,21 +248,20 @@ func (h *Handler) FormMaterialOrderAPI(ctx *gin.Context) {
 		return
 	}
 
-	if err := h.Repository.FormMaterialOrder(orderID); err != nil {
+	if err := h.Repository.FormMaterialOrder(ctx.Request.Context(), orderID); err != nil {
 		h.errorHandler(ctx, http.StatusBadRequest, err)
 		return
 	}
 
 	// Возвращаем обновлённый заказ
-	order, _, err := h.Repository.GetOrderByID(orderID)
+	order, _, err := h.Repository.GetOrderByID(ctx.Request.Context(), orderID)
 	if err != nil {
 		h.errorHandler(ctx, http.StatusInternalServerError, err)
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status": "success",
-		"order":  order,
+		"order": order,
 	})
 }
 
@@ -271,19 +279,18 @@ func (h *Handler) CompleteOrRejectOrderAPI(ctx *gin.Context) {
 		return
 	}
 
-	if err := h.Repository.CompleteOrRejectOrder(orderID, req); err != nil {
+	if err := h.Repository.CompleteOrRejectOrder(ctx.Request.Context(), orderID, req); err != nil {
 		h.errorHandler(ctx, http.StatusInternalServerError, err)
 		return
 	}
 
-	order, materials, err := h.Repository.GetOrderByID(orderID)
+	order, materials, err := h.Repository.GetOrderByID(ctx.Request.Context(), orderID)
 	if err != nil {
 		h.errorHandler(ctx, http.StatusInternalServerError, err)
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status":    "success",
 		"order":     order,
 		"materials": materials,
 	})
@@ -298,13 +305,12 @@ func (h *Handler) DeleteMaterialsOrderAPI(ctx *gin.Context) {
 	}
 
 	// Проставляем статус "удален" и дату завершения
-	if err := h.Repository.SoftDeleteOrder(orderID); err != nil {
+	if err := h.Repository.SoftDeleteOrder(ctx.Request.Context(), orderID); err != nil {
 		h.errorHandler(ctx, http.StatusInternalServerError, err)
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status":  "success",
 		"orderID": orderID,
 	})
 }
