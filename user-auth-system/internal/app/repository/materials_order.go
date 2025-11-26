@@ -2,9 +2,7 @@ package repository
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
-	"math"
 	"strings"
 	"time"
 	"user-auth-system/internal/app/ds"
@@ -37,12 +35,13 @@ func (r *Repository) GetOrdersFiltered(status, start, end string) ([]ds.OrderRes
 	query := r.db.
 		Table("material_orders mo").
 		Select(`mo.id, 
-		        mo.request_status as status, 
-		        mo.date_create, 
-		        mo.date_form, 
-		        mo.date_finish, 
-		        u1.login as moderator, 
-		        u2.login as creator`).
+				mo.request_status as status, 
+				mo.date_create, 
+				mo.date_form, 
+				mo.date_finish, 
+				u1.login as moderator, 
+				u2.login as creator, 
+				(SELECT COUNT(*) FROM material_material_orders mmo WHERE mmo.material_order_id = mo.id AND (mmo.mortar_consumption IS NOT NULL OR mmo.material_consumption <> 0)) as results_count`).
 		Joins("LEFT JOIN users u1 ON u1.id = mo.moderator_id").
 		Joins("LEFT JOIN users u2 ON u2.id = mo.creator_id")
 
@@ -96,7 +95,8 @@ func (r *Repository) GetOrdersFilteredForUser(ctx context.Context, status, start
 				mo.date_form, 
 				mo.date_finish, 
 				u1.login as moderator, 
-				u2.login as creator`).
+				u2.login as creator, 
+				(SELECT COUNT(*) FROM material_material_orders mmo WHERE mmo.material_order_id = mo.id AND (mmo.mortar_consumption IS NOT NULL OR mmo.material_consumption <> 0)) as results_count`).
 		Joins("LEFT JOIN users u1 ON u1.id = mo.moderator_id").
 		Joins("LEFT JOIN users u2 ON u2.id = mo.creator_id").
 		Where("mo.creator_id = ?", userID)
@@ -199,31 +199,6 @@ func (r *Repository) CompleteOrRejectOrder(ctx context.Context, orderID int, req
 		return nil
 	}
 
-	// Рассчитываем расход материалов и раствора (только если заказ завершён)
-	var mmos []ds.MaterialMaterialOrder
-	if err := r.db.WithContext(ctx).Preload("Material").Where("material_order_id = ?", orderID).Find(&mmos).Error; err != nil {
-		return err
-	}
-
-	for _, mmo := range mmos {
-		if mmo.WallLength.Valid && order.CeilingHeight.Valid && order.WallThickness.Valid {
-			wallVolume := mmo.WallLength.Float64 * order.CeilingHeight.Float64 * order.WallThickness.Float64
-
-			// Расход материала (шт.), округляем вверх
-			mmo.MaterialConsumption = int(math.Ceil(wallVolume * float64(mmo.Material.Count)))
-
-			// Расход раствора (м³)
-			mmo.MortarConsumption = sql.NullFloat64{
-				Float64: wallVolume * mmo.Material.Consumption,
-				Valid:   true,
-			}
-
-			if err := r.db.WithContext(ctx).Save(&mmo).Error; err != nil {
-				return err
-			}
-		}
-	}
-
 	return nil
 }
 
@@ -234,4 +209,20 @@ func (r *Repository) SoftDeleteOrder(ctx context.Context, orderID int) error {
 	}
 
 	return r.db.WithContext(ctx).Model(&ds.MaterialOrder{}).Where("id = ?", orderID).Updates(updates).Error
+}
+
+// UpdateMaterialMaterialOrderResults применяет результаты расчёта для записей material_material_orders
+func (r *Repository) UpdateMaterialMaterialOrderResults(ctx context.Context, orderID int, results []ds.MMResult) error {
+	for _, res := range results {
+		updates := map[string]interface{}{
+			"material_consumption": res.MaterialConsumption,
+			"mortar_consumption":   res.MortarConsumption,
+		}
+		if err := r.db.WithContext(ctx).Model(&ds.MaterialMaterialOrder{}).
+			Where("material_order_id = ? AND material_id = ?", orderID, res.MaterialID).
+			Updates(updates).Error; err != nil {
+			return err
+		}
+	}
+	return nil
 }

@@ -13,3 +13,10 @@ type MaterialMaterialOrder struct {
 	Material      *Material      `gorm:"foreignKey:MaterialID;references:ID" json:"material,omitempty"`
 	MaterialOrder *MaterialOrder `gorm:"foreignKey:MaterialOrderID;references:ID" json:"material_order,omitempty"`
 }
+
+// MMResult используется для передачи результатов расчёта между сервисами
+type MMResult struct {
+	MaterialID          int             `json:"material_id"`
+	MaterialConsumption int             `json:"material_consumption"`
+	MortarConsumption   sql.NullFloat64 `json:"mortar_consumption"`
+}

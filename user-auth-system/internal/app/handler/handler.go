@@ -32,6 +32,8 @@ func (h *Handler) RegisterHandler(router *gin.Engine) {
 	// ---------------------------
 	router.GET("/api/materials", h.GetMaterialsAPI)
 	router.GET("/api/materials/:id", h.GetMaterialAPI)
+	// Endpoint для приёма результатов расчёта от асинхронного сервиса
+	router.PUT("/api/material_orders/:id/results", h.ReceiveCalculationResultsAPI)
 	router.POST("/sign_up", h.Register)
 	router.POST("/api/users/login", h.LoginUserAPI)
 	router.POST("/api/users/logout", h.LogoutUserAPI)
@@ -50,8 +52,7 @@ func (h *Handler) RegisterHandler(router *gin.Engine) {
 		// Материалы и заказы (все методы кроме админских)
 		auth.POST("/material_orders/draft/add/:id", h.AddMaterialToDraftOrderAPI)
 		auth.GET("/material_orders", h.GetOrdersAPI)
-		auth.GET("/material_orders/:id", h.GetOrderWithMaterialsAPI)
-		auth.PUT("/material_orders/:id", h.UpdateMaterialOrderAPI)
+
 		auth.PUT("/material_orders/:id/form", h.FormMaterialOrderAPI)
 		auth.PUT("/material_orders/materials/:order_id/:material_id/wall_length", h.UpdateWallLengthAPI)
 		auth.POST("/material_orders/delete/:id", h.DeleteMaterialsOrderAPI)

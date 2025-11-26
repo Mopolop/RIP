@@ -22,11 +22,12 @@ type MaterialOrder struct {
 }
 
 type OrderResponse struct {
-	ID         int        `json:"id"`
-	Status     string     `json:"status"`
-	DateCreate time.Time  `json:"date_create"`
-	DateForm   *time.Time `json:"date_form,omitempty"`
-	DateFinish *time.Time `json:"date_finish,omitempty"`
+	ID           int        `json:"id"`
+	Status       string     `json:"status"`
+	DateCreate   time.Time  `json:"date_create"`
+	DateForm     *time.Time `json:"date_form,omitempty"`
+	DateFinish   *time.Time `json:"date_finish,omitempty"`
+	ResultsCount int        `json:"results_count"`
 }
 
 type OrdersListResponse struct {

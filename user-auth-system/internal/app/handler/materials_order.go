@@ -1,6 +1,10 @@
 package handler
 
 import (
+	"bytes"
+	"context"
+	"database/sql"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -8,6 +12,13 @@ import (
 	"user-auth-system/internal/app/ds"
 
 	"github.com/gin-gonic/gin"
+)
+
+const (
+	// URL асинхронного сервиса (Django). Измените по необходимости.
+	AsyncServiceURL = "http://localhost:8000/api/compute"
+	// Токен псевдо-авторизации (8 байт), который будет передавать асинхронный сервис при POST результатов
+	CalcCallbackToken = "ABCDEFGH"
 )
 
 // POST /orders/delete/:id - пометить заказ как удалённый
@@ -265,6 +276,59 @@ func (h *Handler) FormMaterialOrderAPI(ctx *gin.Context) {
 	})
 }
 
+// ReceiveCalculationResultsAPI — публичный endpoint для приёма результатов от асинхронного сервиса
+func (h *Handler) ReceiveCalculationResultsAPI(ctx *gin.Context) {
+	// Псевдо-авторизация по заголовку
+	token := ctx.GetHeader("X-Calc-Token")
+	if token != CalcCallbackToken {
+		ctx.AbortWithStatus(http.StatusForbidden)
+		return
+	}
+
+	idStr := ctx.Param("id")
+	orderID, err := strconv.Atoi(idStr)
+	if err != nil {
+		h.errorHandler(ctx, http.StatusBadRequest, err)
+		return
+	}
+
+	var body struct {
+		Results []struct {
+			MaterialID          int      `json:"material_id"`
+			MaterialConsumption int      `json:"material_consumption"`
+			MortarConsumption   *float64 `json:"mortar_consumption"`
+		} `json:"results"`
+	}
+
+	if err := ctx.BindJSON(&body); err != nil {
+		h.errorHandler(ctx, http.StatusBadRequest, err)
+		return
+	}
+
+	// Преобразуем и применяем через репозиторий
+	var repoResults []ds.MMResult
+	for _, r := range body.Results {
+		var m sql.NullFloat64
+		if r.MortarConsumption != nil {
+			m = sql.NullFloat64{Float64: *r.MortarConsumption, Valid: true}
+		} else {
+			m = sql.NullFloat64{Valid: false}
+		}
+		repoResults = append(repoResults, ds.MMResult{
+			MaterialID:          r.MaterialID,
+			MaterialConsumption: r.MaterialConsumption,
+			MortarConsumption:   m,
+		})
+	}
+
+	if err := h.Repository.UpdateMaterialMaterialOrderResults(ctx.Request.Context(), orderID, repoResults); err != nil {
+		h.errorHandler(ctx, http.StatusInternalServerError, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "ok"})
+}
+
 func (h *Handler) CompleteOrRejectOrderAPI(ctx *gin.Context) {
 	idStr := ctx.Param("id")
 	orderID, err := strconv.Atoi(idStr)
@@ -288,6 +352,59 @@ func (h *Handler) CompleteOrRejectOrderAPI(ctx *gin.Context) {
 	if err != nil {
 		h.errorHandler(ctx, http.StatusInternalServerError, err)
 		return
+	}
+
+	// Если заказ завершён успешно, запускаем асинхронный расчёт
+	if req.Status == "завершен" {
+		go func() {
+			_, mmos, err := h.Repository.GetOrderByID(context.Background(), orderID)
+			if err != nil {
+				return
+			}
+
+			// Формируем payload для асинхронного сервиса
+			type mmPayload struct {
+				MaterialID          int      `json:"material_id"`
+				WallLength          *float64 `json:"wall_length,omitempty"`
+				MaterialCount       int      `json:"material_count"`
+				MaterialConsumption float64  `json:"material_consumption_per_m3"`
+			}
+
+			var mmList []mmPayload
+			for _, m := range mmos {
+				var wl *float64
+				if m.WallLength.Valid {
+					wl = &m.WallLength.Float64
+				}
+				if m.Material != nil {
+					mmList = append(mmList, mmPayload{
+						MaterialID:          m.MaterialID,
+						WallLength:          wl,
+						MaterialCount:       m.Material.Count,
+						MaterialConsumption: m.Material.Consumption,
+					})
+				}
+			}
+
+			payload := map[string]interface{}{
+				"order_id":       orderID,
+				"ceiling_height": nil,
+				"wall_thickness": nil,
+				"materials":      mmList,
+				"callback_url":   fmt.Sprintf("http://localhost:8080/api/material_orders/%d/results", orderID),
+				"callback_token": CalcCallbackToken,
+			}
+
+			if order.CeilingHeight.Valid {
+				payload["ceiling_height"] = order.CeilingHeight.Float64
+			}
+			if order.WallThickness.Valid {
+				payload["wall_thickness"] = order.WallThickness.Float64
+			}
+
+			b, _ := json.Marshal(payload)
+			http.Post(AsyncServiceURL, "application/json", bytes.NewReader(b))
+		}()
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
