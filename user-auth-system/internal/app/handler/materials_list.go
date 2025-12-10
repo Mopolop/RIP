@@ -165,9 +165,8 @@ func (h *Handler) GetMaterialAPI(ctx *gin.Context) {
 
 // GET /api/materials?title=<название>
 func (h *Handler) GetMaterialsAPI(ctx *gin.Context) {
-	title := ctx.Query("title")
-
-	materials, err := h.Repository.GetMaterialsFiltered(title)
+	materialByName := ctx.Query("material-by-name")
+	materials, err := h.Repository.GetMaterialsFiltered(materialByName)
 	if err != nil {
 		h.errorHandler(ctx, http.StatusInternalServerError, err)
 		return

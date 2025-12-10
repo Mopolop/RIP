@@ -104,11 +104,11 @@ func (r *Repository) GetMaterialByID(id int) (*ds.Material, error) {
 }
 
 // Получаем список материалов с опциональной фильтрацией по названию
-func (r *Repository) GetMaterialsFiltered(title string) ([]ds.Material, error) {
+func (r *Repository) GetMaterialsFiltered(materialByName string) ([]ds.Material, error) {
 	var materials []ds.Material
 	query := r.db.Model(&ds.Material{}).Where("visability = ?", true)
-	if title != "" {
-		query = query.Where("LOWER(title) LIKE ?", "%"+strings.ToLower(title)+"%")
+	if materialByName != "" {
+		query = query.Where("LOWER(title) LIKE ?", "%"+strings.ToLower(materialByName)+"%")
 	}
 	err := query.Find(&materials).Error
 	if err != nil {
